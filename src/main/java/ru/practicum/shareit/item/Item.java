@@ -1,30 +1,21 @@
-package ru.practicum.shareit.item.dto;
+package ru.practicum.shareit.item;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.NotNull;
-
 /**
  * TODO Sprint add-controllers.
  */
-
 @Data
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor
-public class ItemDto {
-
-    private Long id;
-
-    @NotNull
+@AllArgsConstructor
+public class Item {
+    private long id;
+    private long userId; // владелец
     private String name;
-
-    @NotNull
     private String description;
-
-    @NotNull
-    private boolean isAvailable;
+    private boolean idAvailable; // Статус должен проставлять владелец
 }
