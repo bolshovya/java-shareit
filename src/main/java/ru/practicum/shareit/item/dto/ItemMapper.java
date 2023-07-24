@@ -1,5 +1,7 @@
 package ru.practicum.shareit.item.dto;
 
+import ru.practicum.shareit.item.Item;
+
 public class ItemMapper {
 
     public static Item getItem(ItemDto itemDto) {
@@ -7,7 +9,7 @@ public class ItemMapper {
                 .id(itemDto.getId())
                 .name(itemDto.getName())
                 .description(itemDto.getDescription())
-                .isAvailable(itemDto.isAvailable())
+                .idAvailable(itemDto.isAvailable())
                 .build();
     }
 
@@ -16,7 +18,7 @@ public class ItemMapper {
                 .id(item.getId())
                 .name(item.getName())
                 .description(item.getDescription())
-                .isAvailable(item.isAvailable())
+                .isAvailable(item.isIdAvailable())
                 .build();
     }
 }

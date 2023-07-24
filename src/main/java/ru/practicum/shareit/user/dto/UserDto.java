@@ -20,5 +20,6 @@ public class UserDto {
     private String name;
 
     @Email
+    @NotNull
     private String email;
 }

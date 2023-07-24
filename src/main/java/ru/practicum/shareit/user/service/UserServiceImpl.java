@@ -22,10 +22,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto create(UserDto userDto) {
-        User userToDb = UserMapper.getUser(userDto);
-        userStorage.create(userToDb);
-        log.info("UserStorageImpl: сохранение пользователя: ", userToDb);
-        return UserMapper.getUserDto(userToDb);
+        log.info("UserStorageImpl: сохранение пользователя: ", userDto);
+        return UserMapper.getUserDto(userStorage.create(UserMapper.getUser(userDto)));
     }
 
     @Override

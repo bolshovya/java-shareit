@@ -1,9 +1,13 @@
 package ru.practicum.shareit.user.storage;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.exception.UserNotFoundException;
+import ru.practicum.shareit.user.dto.UserDto;
+import ru.practicum.shareit.user.dto.UserMapper;
 
 import java.util.List;
 import java.util.Map;
@@ -11,11 +15,12 @@ import java.util.Optional;
 
 @Repository
 @Slf4j
+@RequiredArgsConstructor(onConstructor_ = @Autowired)
 public class InMemoryUserStorage implements UserStorage {
 
-    private Map<Long, User> storage;
+    private final Map<Long, User> storage;
 
-    private Long userId;
+    private long userId;
 
 
     private Long implement() {
@@ -23,11 +28,16 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
-    public User create(User user) {
-        log.info("InMemoryUserStorage: сохранение пользователя: {}", user);
-        user.setId(implement());
-        storage.put(user.getId(), user);
-        return user;
+    public User create(User newUser) {
+        for (User user : storage.values()) {
+            if (user.getEmail().equals(newUser.getEmail())) {
+                throw new RuntimeException("Пользователь с email: " + newUser.getEmail() + " уже есть в базе данных");
+            }
+        }
+        newUser.setId(implement());
+        log.info("InMemoryUserStorage: сохранение пользователя: {}", newUser);
+        storage.put(newUser.getId(), newUser);
+        return newUser;
     }
 
     @Override
