@@ -39,9 +39,10 @@ public class UserController {
         return userService.findAll();
     }
 
-    @PutMapping()
-    public UserDto update(@Valid @RequestBody UserDto userDto) {
-        log.info("UserController PUT: обновление данных пользователя: {}", userDto);
+    @PatchMapping("/{userId}")
+    public UserDto update(@Valid @RequestBody UserDto userDto, @PathVariable Long userId) {
+        log.info("UserController PATCH: обновление данных пользователя с id: {}", userId);
+        userDto.setId(userId);
         return userService.update(userDto);
     }
 

@@ -19,12 +19,11 @@ public class ItemDto {
 
     private Long id;
 
-    @NotNull
+    private Long userId;
+
     private String name;
 
-    @NotNull
     private String description;
 
-    @NotNull
     private boolean isAvailable;
 }

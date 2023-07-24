@@ -18,21 +18,18 @@ import java.util.stream.Collectors;
 
 @Service
 @Slf4j
-@RequiredArgsConstructor(onConstructor_ = @Autowired)
+@RequiredArgsConstructor
 public class ItemServiceImpl implements ItemService{
 
     private final ItemStorage itemStorage;
     private final UserStorage userStorage;
 
     @Override
-    public ItemDto create(ItemDto itemDto, Long userId) {
-        log.info("ItemServiceImpl: сохранение элемента: {}, id пользователя: {}", itemDto, userId);
-        User userToDb = userStorage.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException("Пользователь с id: " + userId + " не найден"));
-        Item itemToDb = ItemMapper.getItem(itemDto);
-        itemToDb.setUserId(userId);
-        itemStorage.create(itemToDb);
-        return ItemMapper.getItemDto(itemToDb);
+    public ItemDto create(ItemDto itemDto) {
+        log.info("ItemServiceImpl: сохранение элемента: {}", itemDto);
+        userStorage.findById(itemDto.getUserId()).orElseThrow(() -> new UserNotFoundException());
+        Item createdItem = itemStorage.create(ItemMapper.getItem(itemDto));
+        return ItemMapper.getItemDto(createdItem);
     }
 
     @Override

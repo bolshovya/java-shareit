@@ -23,8 +23,11 @@ public class ItemController {
 
     @PostMapping
     public ItemDto create(@Valid @RequestBody ItemDto itemDto, @RequestHeader("X-Sharer-User-Id") Long userId) {
-        log.info("ItemController POST: сохранение элемента: {}, id пользователя: {}", itemDto, userId);
-        return itemService.create(itemDto, userId);
+        if (userId != null) {
+            itemDto.setUserId(userId);
+        }
+        log.info("ItemController POST: сохранение элемента: {}", itemDto);
+        return itemService.create(itemDto);
     }
 
     @GetMapping("/{itemId}")
