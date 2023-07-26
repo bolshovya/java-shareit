@@ -6,18 +6,20 @@ public class ItemMapper {
 
     public static Item getItem(ItemDto itemDto) {
         return Item.builder()
+                .userId(itemDto.getUserId())
                 .name(itemDto.getName())
                 .description(itemDto.getDescription())
-                .idAvailable(itemDto.isAvailable())
+                .available(itemDto.getAvailable())
                 .build();
     }
 
     public static ItemDto getItemDto(Item item) {
         return ItemDto.builder()
                 .id(item.getId())
+                .userId(item.getUserId())
                 .name(item.getName())
                 .description(item.getDescription())
-                .isAvailable(item.isIdAvailable())
+                .available(item.getAvailable())
                 .build();
     }
 }

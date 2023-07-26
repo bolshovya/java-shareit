@@ -48,19 +48,18 @@ public class InMemoryItemStorage implements ItemStorage {
     public Item update(Long itemId, Item itemUpdate) {
         log.info("InMemoryItemStorage: обновление данных элемента с id: {}", itemId);
         Item itemFromDb = storage.get(itemId);
-        if (!itemFromDb.getName().equals(itemUpdate.getName())) {
-            itemFromDb.setName(itemUpdate.getName());
+        itemUpdate.setId(itemId);
+        if (itemUpdate.getName() == null) {
+            itemUpdate.setName(itemFromDb.getName());
         }
-        if (!itemFromDb.getDescription().equals(itemUpdate.getDescription())) {
-            itemFromDb.setDescription(itemUpdate.getDescription());
+        if (itemUpdate.getDescription() == null) {
+            itemUpdate.setDescription(itemFromDb.getDescription());
         }
-        if (itemFromDb.getUserId() != itemUpdate.getUserId()) {
-            itemFromDb.setUserId(itemUpdate.getUserId());
+        if (itemUpdate.getAvailable() == null) {
+            itemUpdate.setAvailable(itemFromDb.getAvailable());
         }
-        if(itemFromDb.isIdAvailable() != itemUpdate.isIdAvailable()) {
-            itemFromDb.setIdAvailable(itemUpdate.isIdAvailable());
-        }
-        return itemFromDb;
+        storage.put(itemId, itemUpdate);
+        return itemUpdate;
     }
 
 

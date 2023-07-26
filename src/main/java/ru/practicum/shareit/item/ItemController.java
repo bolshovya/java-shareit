@@ -23,11 +23,8 @@ public class ItemController {
 
     @PostMapping
     public ItemDto create(@Valid @RequestBody ItemDto itemDto, @RequestHeader("X-Sharer-User-Id") Long userId) {
-        if (userId != null) {
-            itemDto.setUserId(userId);
-        }
-        log.info("ItemController POST: сохранение элемента: {}", itemDto);
-        return itemService.create(itemDto);
+        log.info("ItemController POST: сохранение элемента: {}, для пользователя в с id: {}", itemDto, userId);
+        return itemService.create(itemDto, userId);
     }
 
     @GetMapping("/{itemId}")
@@ -43,10 +40,10 @@ public class ItemController {
     }
 
     @PatchMapping("/{itemId}")
-    public ItemDto update(@PathVariable Long itemId, @RequestBody ItemDto itemDto) {
+    public ItemDto update(@RequestBody ItemDto itemDto, @PathVariable Long itemId,
+                          @RequestHeader("X-Sharer-User-Id") Long userId) {
         log.info("ItemController PATCH: обновление данных элемента с id: {}", itemId);
-        itemService.findById(itemId);
-        return itemService.update(itemId, itemDto);
+        return itemService.update(itemId, userId, itemDto);
     }
 
 

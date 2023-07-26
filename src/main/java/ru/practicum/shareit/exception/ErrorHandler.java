@@ -28,7 +28,14 @@ public class ErrorHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleUserValidationException(final UserValidationException e) {
         log.debug("UserValidationException. Получен статус 400 {}", e.getMessage());
-        return new ErrorResponse("ItemNotFoundException", e.getMessage());
+        return new ErrorResponse("UserValidationException", e.getMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleItemValidationException(final ItemValidationException e) {
+        log.debug("ItemValidationException. Получен статус 400 {}", e.getMessage());
+        return new ErrorResponse("ItemValidationException", e.getMessage());
     }
 
     @ExceptionHandler
@@ -42,7 +49,7 @@ public class ErrorHandler {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorResponse handleRuntimeException(final RuntimeException e) {
-        log.debug("Получен статус 400 {}", e.getMessage());
+        log.debug("Получен статус 500 {}", e.getMessage());
         return new ErrorResponse("RuntimeException", e.getMessage());
     }
 

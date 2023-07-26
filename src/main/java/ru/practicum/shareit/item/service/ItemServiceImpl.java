@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.practicum.shareit.exception.ConflictException;
 import ru.practicum.shareit.exception.ItemNotFoundException;
 import ru.practicum.shareit.exception.UserNotFoundException;
 import ru.practicum.shareit.item.*;
@@ -25,9 +26,10 @@ public class ItemServiceImpl implements ItemService{
     private final UserStorage userStorage;
 
     @Override
-    public ItemDto create(ItemDto itemDto) {
-        log.info("ItemServiceImpl: сохранение элемента: {}", itemDto);
-        userStorage.findById(itemDto.getUserId()).orElseThrow(() -> new UserNotFoundException());
+    public ItemDto create(ItemDto itemDto, Long userId) {
+        log.info("ItemServiceImpl: сохранение элемента: {}, для пользователя в с id: {}", itemDto, userId);
+        userStorage.findById(userId).orElseThrow(() -> new UserNotFoundException());
+        itemDto.setUserId(userId);
         Item createdItem = itemStorage.create(ItemMapper.getItem(itemDto));
         return ItemMapper.getItemDto(createdItem);
     }
@@ -47,10 +49,15 @@ public class ItemServiceImpl implements ItemService{
     }
 
     @Override
-    public ItemDto update(Long itemId, ItemDto itemUpdate) {
+    public ItemDto update(Long itemId, Long userId, ItemDto itemDtoUpdate) {
         log.info("ItemServiceImpl: обновление данных элемента с id: {}", itemId);
-        itemStorage.findById(itemId);
-        return ItemMapper.getItemDto(itemStorage.update(itemId, ItemMapper.getItem(itemUpdate)));
+        ItemDto itemFromDb = findById(itemId);
+        userStorage.findById(userId).orElseThrow(() -> new UserNotFoundException("Пользователь с id: " + userId + " не найден"));
+        if (itemFromDb.getUserId() != userId) {
+            throw new ItemNotFoundException("id пользователей не совпадают");
+        }
+        itemDtoUpdate.setUserId(userId);
+        return ItemMapper.getItemDto(itemStorage.update(itemId, ItemMapper.getItem(itemDtoUpdate)));
     }
 
 

@@ -60,7 +60,7 @@ public class InMemoryUserStorage implements UserStorage {
     @Override
     public Optional<User> findById(Long id) {
         log.info("InMemoryUserStorage: получение пользователя с id: {}", id);
-        return Optional.of(storage.get(id));
+        return Optional.ofNullable(storage.get(id));
     }
 
     @Override
