@@ -2,16 +2,13 @@ package ru.practicum.shareit.item.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.practicum.shareit.exception.ConflictException;
 import ru.practicum.shareit.exception.ItemNotFoundException;
 import ru.practicum.shareit.exception.UserNotFoundException;
 import ru.practicum.shareit.item.*;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemMapper;
 import ru.practicum.shareit.item.storage.ItemStorage;
-import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.storage.UserStorage;
 
 import java.util.List;
@@ -43,9 +40,9 @@ public class ItemServiceImpl implements ItemService{
     }
 
     @Override
-    public List<ItemDto> findAll() {
-        log.info("ItemServiceImpl: получение списка всех элементов");
-        return itemStorage.findAll().stream().map(ItemMapper::getItemDto).collect(Collectors.toList());
+    public List<ItemDto> findAll(Long userId) {
+        log.info("ItemServiceImpl: получение списка всех элементов для пользователя с id: {}", userId);
+        return itemStorage.findAll().stream().filter(x -> x.getUserId() == userId).map(ItemMapper::getItemDto).collect(Collectors.toList());
     }
 
     @Override
@@ -58,6 +55,12 @@ public class ItemServiceImpl implements ItemService{
         }
         itemDtoUpdate.setUserId(userId);
         return ItemMapper.getItemDto(itemStorage.update(itemId, ItemMapper.getItem(itemDtoUpdate)));
+    }
+
+    @Override
+    public List<ItemDto> search(String text, Long userId) {
+        log.info("ItemServiceImpl: поиск элементов содержащих: {}", text);
+        return itemStorage.search(text, userId).stream().map(ItemMapper::getItemDto).collect(Collectors.toList());
     }
 
 

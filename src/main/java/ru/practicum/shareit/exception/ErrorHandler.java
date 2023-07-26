@@ -45,14 +45,4 @@ public class ErrorHandler {
         return new ErrorResponse("ConflictException", e.getMessage());
     }
 
-    /*
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ErrorResponse handleRuntimeException(final RuntimeException e) {
-        log.debug("Получен статус 500 {}", e.getMessage());
-        return new ErrorResponse("RuntimeException", e.getMessage());
-    }
-
-     */
-
 }

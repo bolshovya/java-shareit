@@ -6,9 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.item.Item;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Repository
 @Slf4j
@@ -40,8 +39,8 @@ public class InMemoryItemStorage implements ItemStorage {
 
     @Override
     public List<Item> findAll() {
-        log.info("InMemoryItemStorage: получение списка всех элементов");
-        return (List<Item>) storage.values();
+        log.info("InMemoryItemStorage: получение списка всех элементов для пользователя с id");
+        return new ArrayList<>(storage.values());
     }
 
     @Override
@@ -62,6 +61,21 @@ public class InMemoryItemStorage implements ItemStorage {
         return itemUpdate;
     }
 
-
+    @Override
+    public List<Item> search(String text, Long userId) {
+        log.info("InMemoryItemStorage: поиск элементов содержащих: {}", text);
+        Set<Item> setItem = new HashSet<>();
+        if (text.isEmpty()) {
+            return new ArrayList<>();
+        }
+        for (Item item : storage.values()) {
+            String itemName = item.getName().toLowerCase();
+            String itemDescription = item.getDescription().toLowerCase();
+            if (itemName.contains(text.toLowerCase()) || itemDescription.contains(text.toLowerCase())) {
+                setItem.add(item);
+            }
+        }
+        return setItem.stream().filter(x-> x.getAvailable()==true).collect(Collectors.toList());
+    }
 
 }

@@ -13,4 +13,6 @@ public interface ItemStorage {
     List<Item> findAll();
 
     Item update(Long itemId, Item itemUpdate);
+
+    List<Item> search(String text, Long userId);
 }

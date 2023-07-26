@@ -34,9 +34,9 @@ public class ItemController {
     }
 
     @GetMapping
-    public List<ItemDto> findAll() {
-        log.info("ItemController GET: получение списка всех элементов");
-        return itemService.findAll();
+    public List<ItemDto> findAll(@RequestHeader("X-Sharer-User-Id") Long userId) {
+        log.info("ItemController GET: получение списка всех элементов для пользователя с id: {}", userId);
+        return itemService.findAll(userId);
     }
 
     @PatchMapping("/{itemId}")
@@ -44,6 +44,12 @@ public class ItemController {
                           @RequestHeader("X-Sharer-User-Id") Long userId) {
         log.info("ItemController PATCH: обновление данных элемента с id: {}", itemId);
         return itemService.update(itemId, userId, itemDto);
+    }
+
+    @GetMapping("/search")
+    public List<ItemDto> search(@RequestParam String text, @RequestHeader("X-Sharer-User-Id") Long userId) {
+        log.info("ItemController GET: поиск элементов содержащих: {} для пользователя с id: {}", text, userId);
+        return itemService.search(text, userId);
     }
 
 
