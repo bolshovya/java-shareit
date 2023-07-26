@@ -49,7 +49,7 @@ public class InMemoryUserStorage implements UserStorage {
 
     private void checkEmailExists(User newUser) {
         for (User user : storage.values()) {
-            if (user.getEmail().equals(newUser.getEmail()) && user.getId() != newUser.getId()) {
+            if (user.getEmail().equals(newUser.getEmail()) && !user.getId().equals(newUser.getId())) {
                 throw new ConflictException("Пользователь с email: " + newUser.getEmail() + " уже есть в базе данных");
             }
         }

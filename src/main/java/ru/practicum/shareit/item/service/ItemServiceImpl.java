@@ -50,7 +50,7 @@ public class ItemServiceImpl implements ItemService {
         log.info("ItemServiceImpl: обновление данных элемента с id: {}", itemId);
         ItemDto itemFromDb = findById(itemId);
         userStorage.findById(userId).orElseThrow(() -> new UserNotFoundException("Пользователь с id: " + userId + " не найден"));
-        if (itemFromDb.getUserId() != userId) {
+        if (!itemFromDb.getUserId().equals(userId)) {
             throw new ItemNotFoundException("id пользователей не совпадают");
         }
         itemDtoUpdate.setUserId(userId);
