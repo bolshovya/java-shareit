@@ -75,7 +75,7 @@ public class InMemoryItemStorage implements ItemStorage {
                 setItem.add(item);
             }
         }
-        return setItem.stream().filter(x-> x.getAvailable()==true).collect(Collectors.toList());
+        return setItem.stream().filter(Item::getAvailable).collect(Collectors.toList());
     }
 
 }
