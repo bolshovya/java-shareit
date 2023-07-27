@@ -78,4 +78,13 @@ public class InMemoryItemStorage implements ItemStorage {
         return setItem.stream().filter(Item::getAvailable).collect(Collectors.toList());
     }
 
+    @Override
+    public void deleteByUserId(Long userId) {
+        log.info("InMemoryItemStorage: удаление элементов пользователя с id: {}", userId);
+        for (Item item : storage.values()) {
+            if (item.getUserId() == userId) {
+                storage.remove(item.getId());
+            }
+        }
+    }
 }

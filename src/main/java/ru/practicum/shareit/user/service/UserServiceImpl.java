@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exception.UserNotFoundException;
+import ru.practicum.shareit.item.storage.ItemStorage;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.dto.UserMapper;
@@ -18,6 +19,8 @@ import java.util.stream.Collectors;
 public class UserServiceImpl implements UserService {
 
     private final UserStorage userStorage;
+
+    private final ItemStorage itemStorage;
 
     @Override
     public UserDto create(UserDto userDto) {
@@ -62,5 +65,6 @@ public class UserServiceImpl implements UserService {
         findById(id);
         log.info("UserServiceImpl: удаление пользователя с id: {}", id);
         userStorage.delete(id);
+        itemStorage.deleteByUserId(id);
     }
 }
