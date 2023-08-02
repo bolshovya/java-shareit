@@ -82,7 +82,7 @@ public class InMemoryItemStorage implements ItemStorage {
     public void deleteByUserId(Long userId) {
         log.info("InMemoryItemStorage: удаление элементов пользователя с id: {}", userId);
         for (Item item : storage.values()) {
-            if (item.getUserId() == userId) {
+            if (item.getOwner().getId() == userId) {
                 storage.remove(item.getId());
             }
         }

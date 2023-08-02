@@ -43,11 +43,14 @@ public class ItemController {
         return itemService.update(itemId, userId, itemDto);
     }
 
+    /*
     @GetMapping("/search")
     public List<ItemDto> search(@RequestParam String text, @RequestHeader("X-Sharer-User-Id") Long userId) {
         log.info("ItemController GET: поиск элементов содержащих: {} для пользователя с id: {}", text, userId);
         return itemService.search(text, userId);
     }
+
+     */
 
 
 }

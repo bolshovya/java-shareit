@@ -13,5 +13,5 @@ public interface ItemService {
 
     ItemDto update(Long itemId, Long userId, ItemDto itemDtoUpdate);
 
-    List<ItemDto> search(String text, Long userId);
+    // List<ItemDto> search(String text, Long userId);
 }
