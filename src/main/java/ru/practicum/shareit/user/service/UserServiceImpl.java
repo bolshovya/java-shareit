@@ -3,7 +3,9 @@ package ru.practicum.shareit.user.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import ru.practicum.shareit.exception.ConflictException;
 import ru.practicum.shareit.exception.UserNotFoundException;
+import ru.practicum.shareit.exception.UserValidationException;
 import ru.practicum.shareit.item.storage.ItemRepository;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.dto.UserDto;
@@ -27,6 +29,22 @@ public class UserServiceImpl implements UserService {
         log.info("UserServiceImpl: сохранение пользователя: ", userDto);
         User createdUser = userRepository.save(UserMapper.getUser(userDto));
         return UserMapper.getUserDto(createdUser);
+    }
+
+    private void checkEmailValid(UserDto newUser) {
+        if (newUser.getEmail() == null) {
+            throw new UserValidationException("Email не может быть пустым");
+        }
+        if (!newUser.getEmail().contains("@")) {
+            throw new UserValidationException("Email должен содержать @");
+        }
+    }
+
+    private void checkEmailExists(UserDto newUser) {
+        User userFromDb = userRepository.findByEmail(newUser.getEmail());
+        if (userFromDb.getEmail().equals(newUser.getEmail())) {
+            throw new ConflictException("Пользователь с email: " + newUser.getEmail() + " уже есть в базе данных");
+        }
     }
 
     @Override
