@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 import ru.practicum.shareit.item.Item;
 
 import javax.persistence.*;
-import javax.validation.constraints.Email;
 import java.util.List;
 
 @Data
@@ -26,8 +25,7 @@ public class User {
     @Column(name = "name")
     private String name;
 
-    @Column(name = "email")
-    @Email
+    @Column(name = "email", unique = true)
     private String email;
 
     @OneToMany(mappedBy = "owner")
