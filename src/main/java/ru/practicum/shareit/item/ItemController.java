@@ -36,12 +36,15 @@ public class ItemController {
         return itemService.findAll(userId);
     }
 
+    /*
     @PatchMapping("/{itemId}")
     public ItemDto update(@RequestBody ItemDto itemDto, @PathVariable Long itemId,
                           @RequestHeader("X-Sharer-User-Id") Long userId) {
         log.info("ItemController PATCH: обновление данных элемента с id: {}", itemId);
         return itemService.update(itemId, userId, itemDto);
     }
+
+     */
 
     /*
     @GetMapping("/search")

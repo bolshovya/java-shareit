@@ -13,8 +13,6 @@ public class ItemDto {
 
     private Long id;
 
-    private User owner;
-
     @NotBlank
     private String name;
 

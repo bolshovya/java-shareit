@@ -23,6 +23,7 @@ public class Item {
 
     @ManyToOne
     @JoinColumn(name = "owner", referencedColumnName = "id")
+    // @JoinColumn(name = "id")
     private User owner; // владелец
 
     @Column(name = "name")

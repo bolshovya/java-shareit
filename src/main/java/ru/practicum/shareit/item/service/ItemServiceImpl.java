@@ -3,6 +3,7 @@ package ru.practicum.shareit.item.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.exception.ItemNotFoundException;
 import ru.practicum.shareit.exception.UserNotFoundException;
 import ru.practicum.shareit.item.Item;
@@ -23,12 +24,14 @@ public class ItemServiceImpl implements ItemService {
     private final ItemRepository itemRepository;
     private final UserRepository userRepository;
 
+    @Transactional
     @Override
     public ItemDto create(ItemDto itemDto, Long userId) {
         log.info("ItemServiceImpl: сохранение элемента: {}, для пользователя в с id: {}", itemDto, userId);
         User userFromDb = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
-        itemDto.setOwner(userFromDb);
-        Item createdItem = itemRepository.save(ItemMapper.getItem(itemDto));
+        Item itemToDb = ItemMapper.getItem(itemDto);
+        itemToDb.setOwner(userFromDb);
+        Item createdItem = itemRepository.save(itemToDb);
         return ItemMapper.getItemDto(createdItem);
     }
 
@@ -47,6 +50,7 @@ public class ItemServiceImpl implements ItemService {
         // return itemStorage.findAll().stream().filter(x -> x.getUserId() == userId).map(ItemMapper::getItemDto).collect(Collectors.toList());
     }
 
+    /*
     @Override
     public ItemDto update(Long itemId, Long userId, ItemDto itemDtoUpdate) {
         log.info("ItemServiceImpl: обновление данных элемента с id: {}", itemId);
@@ -58,6 +62,8 @@ public class ItemServiceImpl implements ItemService {
         itemDtoUpdate.setOwner(userFromDb);
         return ItemMapper.getItemDto(itemRepository.save(ItemMapper.getItem(itemDtoUpdate)));
     }
+
+     */
 
     /*
     @Override
