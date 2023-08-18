@@ -8,6 +8,8 @@ import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.service.ItemService;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import java.util.List;
 
 @RestController
@@ -36,7 +38,7 @@ public class ItemController {
         return itemService.findAll(userId);
     }
 
-    /*
+
     @PatchMapping("/{itemId}")
     public ItemDto update(@RequestBody ItemDto itemDto, @PathVariable Long itemId,
                           @RequestHeader("X-Sharer-User-Id") Long userId) {
@@ -44,16 +46,13 @@ public class ItemController {
         return itemService.update(itemId, userId, itemDto);
     }
 
-     */
 
-    /*
+
     @GetMapping("/search")
     public List<ItemDto> search(@RequestParam String text, @RequestHeader("X-Sharer-User-Id") Long userId) {
         log.info("ItemController GET: поиск элементов содержащих: {} для пользователя с id: {}", text, userId);
         return itemService.search(text, userId);
     }
-
-     */
 
 
 }
