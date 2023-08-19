@@ -26,6 +26,13 @@ public class ErrorHandler {
     }
 
     @ExceptionHandler
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse handleBookingNotFoundException(final BookingNotFoundException e) {
+        log.debug("Бронирование не найдено. Получен статус 404 {}", e.getMessage());
+        return new ErrorResponse("BookingNotFoundException", e.getMessage());
+    }
+
+    @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleUserValidationException(final UserValidationException e) {
         log.debug("UserValidationException. Получен статус 400 {}", e.getMessage());
@@ -37,6 +44,13 @@ public class ErrorHandler {
     public ErrorResponse handleItemValidationException(final ItemValidationException e) {
         log.debug("ItemValidationException. Получен статус 400 {}", e.getMessage());
         return new ErrorResponse("ItemValidationException", e.getMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleBookingValidationException(final BookingValidationException e) {
+        log.debug("BookingValidationException. Получен статус 400 {}", e.getMessage());
+        return new ErrorResponse("BookingValidationException", e.getMessage());
     }
 
     @ExceptionHandler
