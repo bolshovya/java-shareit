@@ -68,6 +68,13 @@ public class ErrorHandler {
     }
 
     @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleUnknownStateException(final UnknownStateException e) {
+        log.debug("UnknownStateException . Получен статус 400 {}", e.getMessage());
+        return new ErrorResponse(e.getMessage());
+    }
+
+    @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorResponse handleException(final Exception e) {
         log.debug("Exception. Получен статус 500 {}", e.getMessage());

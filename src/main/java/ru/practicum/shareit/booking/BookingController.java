@@ -5,9 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.dto.BookingDto;
+import ru.practicum.shareit.booking.dto.BookingRequestDto;
 import ru.practicum.shareit.booking.service.BookingService;
-import ru.practicum.shareit.exception.BookingValidationException;
-import ru.practicum.shareit.item.dto.ItemDto;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -21,33 +20,51 @@ public class BookingController {
     private final BookingService bookingService;
 
     @PostMapping
-    public BookingDto create(@Valid @RequestBody BookingDto bookingDto, @RequestHeader("X-Sharer-User-Id") Long userId) {
-        log.info("BookingController POST: сохранение бронирования: {}, для пользователя в с id: {}", bookingDto, userId);
-        return bookingService.create(bookingDto, userId);
+    public BookingDto create(@Valid @RequestBody BookingRequestDto bookingRequestDto, @RequestHeader("X-Sharer-User-Id") Long userId) {
+        log.info("BookingController POST: сохранение бронирования: {}, для пользователя в с id: {}", bookingRequestDto, userId);
+        return bookingService.create(bookingRequestDto, userId);
     }
 
-    @PatchMapping("/{bookingId}")
-    public BookingDto updateApproved(@PathVariable Long bookingId, @RequestParam Boolean approved,
-                          @RequestHeader("X-Sharer-User-Id") Long userId) {
-        return bookingService.updateApproved(bookingId, approved, userId);
-    }
 
-    @GetMapping("/{bookingId}")
-    public BookingDto findById(@PathVariable Long bookingId, @RequestHeader("X-Sharer-User-Id") Long userId) {
-        return bookingService.findById(bookingId, userId);
-    }
-
-    @GetMapping
-    public List<BookingDto> findAllByBooker(@RequestHeader("X-Sharer-User-Id") Long userId) {
-        return bookingService.findAllByBooker(userId);
-    }
-
-    /*
-    @GetMapping
-    public List<BookingDto> findAllByBookerAndState(@RequestParam String state, @RequestHeader("X-Sharer-User-Id") Long userId) {
-        return bookingService.findAllByBookerAndState(state, userId);
-    }
-
+    /**
+    * Подтверждение или отклонение запроса на бронирование. Может быть выполнено только владельцем вещи.
+    * Затем статус бронирования становится либо APPROVED, либо REJECTED.
+    * Эндпоинт — PATCH /bookings/{bookingId}?approved={approved}, параметр approved может принимать значения true или false.
      */
+    @PatchMapping("/{bookingId}")
+    public BookingDto updateBookingStatus(@PathVariable Long bookingId, @RequestParam String approved,
+                          @RequestHeader("X-Sharer-User-Id") Long userId) {
+        return bookingService.updateBookingStatus(bookingId, approved, userId);
+    }
+
+    /**
+    * Получение данных о конкретном бронировании (включая его статус).
+    * Может быть выполнено либо автором бронирования, либо владельцем вещи, к которой относится бронирование.
+    * Эндпоинт — GET /bookings/{bookingId}.
+     */
+    @GetMapping("/{bookingId}")
+    public BookingDto getBooking(@PathVariable Long bookingId, @RequestHeader("X-Sharer-User-Id") Long userId) {
+        return bookingService.getBooking(bookingId, userId);
+    }
+
+    /**
+     * Получение списка всех бронирований текущего пользователя.
+     * Эндпоинт — GET /bookings?state={state}. Параметр state необязательный и по умолчанию равен ALL (англ. «все»).
+     * Также он может принимать значения:
+     * CURRENT (англ. «текущие»),
+     * PAST (англ. «завершённые»),
+     * FUTURE (англ. «будущие»),
+     * WAITING (англ. «ожидающие подтверждения»),
+     * REJECTED (англ. «отклонённые»).
+     * Бронирования должны возвращаться отсортированными по дате от более новых к более старым.
+     */
+    @GetMapping
+    public List<BookingDto> getAllByBooker(@RequestParam(value = "state", defaultValue = "ALL", required = false) String state,
+                                            @RequestHeader("X-Sharer-User-Id") Long userId) {
+        log.info("BookingController: запрос всех бронирований({}) пользователя с id: {}", state, userId);
+        return bookingService.getAllByBooker(state, userId);
+    }
+
+
 
 }
