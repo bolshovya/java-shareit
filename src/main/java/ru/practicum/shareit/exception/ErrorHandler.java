@@ -69,9 +69,9 @@ public class ErrorHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleUnknownStateException(final UnknownStateException e) {
+    public ErrorResponseSingle handleUnknownStateException(final UnknownStateException e) {
         log.debug("UnknownStateException . Получен статус 400 {}", e.getMessage());
-        return new ErrorResponse(e.getMessage());
+        return new ErrorResponseSingle("Unknown state: " + e.getMessage());
     }
 
     @ExceptionHandler

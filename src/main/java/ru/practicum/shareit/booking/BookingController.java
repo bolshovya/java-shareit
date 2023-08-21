@@ -65,6 +65,18 @@ public class BookingController {
         return bookingService.getAllByBooker(state, userId);
     }
 
+    /**
+     * Получение списка бронирований для всех вещей текущего пользователя.
+     * Эндпоинт — GET /bookings/owner?state={state}.
+     * Этот запрос имеет смысл для владельца хотя бы одной вещи.
+     * Работа параметра state аналогична его работе в предыдущем сценарии.
+     */
+    @GetMapping("/owner")
+    public List<BookingDto> getAllBookingsForAllItemsOfOwner(@RequestParam(value = "state", defaultValue = "ALL", required = false) String state,
+                                           @RequestHeader("X-Sharer-User-Id") Long userId) {
+        log.info("BookingController: запрос всех бронирований({}) пользователя с id: {}", state, userId);
+        return bookingService.getAllBookingsForAllItemsOfOwner(state, userId);
+    }
 
 
 }

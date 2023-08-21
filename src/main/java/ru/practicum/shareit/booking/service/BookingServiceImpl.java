@@ -18,11 +18,7 @@ import ru.practicum.shareit.user.storage.UserRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
-
-import static java.lang.Boolean.FALSE;
-import static java.lang.Boolean.TRUE;
 
 @Service
 @Slf4j
@@ -143,6 +139,42 @@ public class BookingServiceImpl implements BookingService {
 
             case "REJECTED":
                 return bookingRepository.findAllByBookerAndStatusOrderByStartDesc(booker, BookingStatus.valueOf(state))
+                        .stream().map(BookingMapper::getBookingDto).collect(Collectors.toList());
+
+            default:
+                throw new UnknownStateException(state);
+        }
+    }
+
+    @Override
+    public List<BookingDto> getAllBookingsForAllItemsOfOwner(String state, Long userId) {
+        log.info("BookingServiceImpl: запрос всех бронирований({}) вещей владельца с id: {}", state, userId);
+        User owner = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+        LocalDateTime time = LocalDateTime.now();
+
+        switch (state) {
+            case "ALL":
+                return bookingRepository.findAllByItemOwnerOrderByStartDesc(owner)
+                        .stream().map(BookingMapper::getBookingDto).collect(Collectors.toList());
+
+            case "CURRENT":
+                return bookingRepository.findAllByItemOwnerAndEndBeforeOrderByStartDesc(owner, time)
+                        .stream().map(BookingMapper::getBookingDto).collect(Collectors.toList());
+
+            case "PAST":
+                return bookingRepository.findAllByItemOwnerAndStartBeforeAndEndAfterOrderByStartDesc(owner, time, time)
+                        .stream().map(BookingMapper::getBookingDto).collect(Collectors.toList());
+
+            case "FUTURE":
+                return bookingRepository.findAllByItemOwnerAndEndAfterOrderByStartDesc(owner, time)
+                        .stream().map(BookingMapper::getBookingDto).collect(Collectors.toList());
+
+            case "WAITING":
+                return bookingRepository.findAllByItemOwnerAndStatusOrderByStartDesc(owner, BookingStatus.valueOf(state))
+                        .stream().map(BookingMapper::getBookingDto).collect(Collectors.toList());
+
+            case "REJECTED":
+                return bookingRepository.findAllByItemOwnerAndStatusOrderByStartDesc(owner, BookingStatus.valueOf(state))
                         .stream().map(BookingMapper::getBookingDto).collect(Collectors.toList());
 
             default:
