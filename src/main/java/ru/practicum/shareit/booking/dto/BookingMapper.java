@@ -47,6 +47,7 @@ public class BookingMapper {
                 .item(ItemDto.builder()
                         .id(booking.getItem().getId())
                         .name(booking.getItem().getName())
+                        .ownerId(booking.getItem().getOwner().getId())
                         .build())
                 .booker(UserDto.builder()
                         .id(booking.getBooker().getId())

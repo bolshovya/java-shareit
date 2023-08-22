@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.shareit.booking.storage.BookingRepository;
 import ru.practicum.shareit.exception.ItemNotFoundException;
 import ru.practicum.shareit.exception.UserNotFoundException;
 import ru.practicum.shareit.item.Item;
@@ -13,6 +14,7 @@ import ru.practicum.shareit.item.storage.ItemRepository;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.storage.UserRepository;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -24,6 +26,7 @@ public class ItemServiceImpl implements ItemService {
 
     private final ItemRepository itemRepository;
     private final UserRepository userRepository;
+    private final BookingRepository bookingRepository;
 
     @Transactional
     @Override
@@ -42,6 +45,8 @@ public class ItemServiceImpl implements ItemService {
         log.info("ItemServiceImpl: получение элемента по id: {}", itemId);
         Item itemFromDb = itemRepository.findById(itemId)
                 .orElseThrow(() -> new ItemNotFoundException("Элемента с id: " + itemId + " не найден"));
+
+        bookingRepository.findByItemAndEndBeforeOrderByStartDesc(itemFromDb, LocalDateTime.now());
         return ItemMapper.getItemDto(itemFromDb);
     }
 

@@ -4,6 +4,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import ru.practicum.shareit.booking.Booking;
 import ru.practicum.shareit.booking.BookingStatus;
+import ru.practicum.shareit.item.Item;
 import ru.practicum.shareit.user.User;
 
 import java.time.LocalDateTime;
@@ -31,4 +32,8 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     List<Booking> findAllByItemOwnerAndStartBeforeAndEndAfterOrderByStartDesc(User booker, LocalDateTime time1, LocalDateTime time2);
 
     List<Booking> findAllByItemOwnerAndEndAfterOrderByStartDesc(User booker, LocalDateTime time);
+
+    List<Booking> findByItemAndEndBeforeOrderByStartDesc(Item item, LocalDateTime time);
+
+    List<Booking> findByItemAndStartAfterOrderByStartDesc(Item item, LocalDateTime time);
 }

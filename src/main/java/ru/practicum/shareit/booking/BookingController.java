@@ -19,12 +19,17 @@ public class BookingController {
 
     private final BookingService bookingService;
 
+    /**
+     * Добавление нового запроса на бронирование.
+     * Запрос может быть создан любым пользователем, а затем подтверждён владельцем вещи.
+     * Эндпоинт — POST /bookings.
+     * После создания запрос находится в статусе WAITING — «ожидает подтверждения».
+     */
     @PostMapping
     public BookingDto create(@Valid @RequestBody BookingRequestDto bookingRequestDto, @RequestHeader("X-Sharer-User-Id") Long userId) {
         log.info("BookingController POST: сохранение бронирования: {}, для пользователя в с id: {}", bookingRequestDto, userId);
         return bookingService.create(bookingRequestDto, userId);
     }
-
 
     /**
     * Подтверждение или отклонение запроса на бронирование. Может быть выполнено только владельцем вещи.

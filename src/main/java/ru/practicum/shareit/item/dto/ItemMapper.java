@@ -19,6 +19,7 @@ public class ItemMapper {
                 .id(item.getId())
                 .name(item.getName())
                 .description(item.getDescription())
+                .ownerId(item.getOwner().getId())
                 .available(item.getAvailable())
                 .build();
     }

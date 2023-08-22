@@ -47,6 +47,9 @@ public class BookingServiceImpl implements BookingService {
         if (!item.getAvailable()) {
             throw new ItemValidationException("Элемент с id: " + item.getId() + " не доступен");
         }
+        if (item.getOwner().getId().equals(userId)) {
+            throw new ItemNotFoundException("Владелец не может бронировать свои элементы");
+        }
         bookingToDb.setItem(item);
         return BookingMapper.getBookingDto(bookingRepository.save(bookingToDb));
         /*
@@ -72,14 +75,17 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public BookingDto updateBookingStatus(Long bookingId, String approved, Long userId) {
-        User booker = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+        User owner = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
 
         Booking booking = bookingRepository.findById(bookingId).orElseThrow(BookingNotFoundException::new);
-
         User ownerBooking = booking.getItem().getOwner();
 
-        if (!userId.equals(ownerBooking.getId())) {
-            throw new BookingNotFoundException();
+        if (!ownerBooking.getId().equals(userId)) {
+            throw new BookingNotFoundException("Пользователь с id: " + userId + "не является владельцем.");
+        }
+
+        if (booking.getStatus() != BookingStatus.WAITING) {
+            throw new BookingValidationException();
         }
 
         switch (approved.toLowerCase()) {

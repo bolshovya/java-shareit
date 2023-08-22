@@ -2,6 +2,7 @@ package ru.practicum.shareit.item.dto;
 
 import lombok.Builder;
 import lombok.Data;
+import ru.practicum.shareit.booking.dto.BookingDto;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -18,6 +19,12 @@ public class ItemDto {
     @NotBlank
     private String description;
 
+    private Long ownerId;
+
     @NotNull
     private Boolean available;
+
+    BookingDto lastBooking;
+
+    BookingDto nextBooking;
 }
