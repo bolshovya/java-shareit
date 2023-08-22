@@ -4,7 +4,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.shareit.booking.Booking;
+import ru.practicum.shareit.booking.BookingStatus;
+import ru.practicum.shareit.booking.dto.BookingMapper;
 import ru.practicum.shareit.booking.storage.BookingRepository;
+import ru.practicum.shareit.exception.BookingNotFoundException;
 import ru.practicum.shareit.exception.ItemNotFoundException;
 import ru.practicum.shareit.exception.UserNotFoundException;
 import ru.practicum.shareit.item.Item;
@@ -17,6 +21,7 @@ import ru.practicum.shareit.user.storage.UserRepository;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -41,22 +46,44 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public ItemDto findById(Long itemId) {
+    public ItemDto findById(Long itemId, Long userId) {
         log.info("ItemServiceImpl: получение элемента по id: {}", itemId);
         Item itemFromDb = itemRepository.findById(itemId)
                 .orElseThrow(() -> new ItemNotFoundException("Элемента с id: " + itemId + " не найден"));
 
-        bookingRepository.findByItemAndEndBeforeOrderByStartDesc(itemFromDb, LocalDateTime.now());
-        return ItemMapper.getItemDto(itemFromDb);
+        Optional<Booking> lastBooking = bookingRepository.findByItemAndItemOwnerIdAndEndBeforeOrderByStartDesc(itemFromDb, userId, LocalDateTime.now())
+                .stream().filter(x -> x.getStatus().equals(BookingStatus.APPROVED)).findFirst();
+        Optional<Booking> nextBooking = bookingRepository.findByItemAndItemOwnerIdAndStartAfterOrderByStartAsc(itemFromDb, userId, LocalDateTime.now())
+                .stream().filter(x -> x.getStatus().equals(BookingStatus.APPROVED)).findFirst();
+        ItemDto itemDto = ItemMapper.getItemDto(itemFromDb);
+        if (nextBooking.isPresent() && lastBooking.isPresent()) {
+            itemDto.setLastBooking(ItemMapper.getItemBookingDto(lastBooking.get()));
+            itemDto.setNextBooking(ItemMapper.getItemBookingDto(nextBooking.get()));
+        }
+        return itemDto;
+    }
+
+    private ItemDto getBooking(Item item) {
+        Long userId = item.getOwner().getId();
+        ItemDto itemDto = ItemMapper.getItemDto(item);
+
+        Optional<Booking> lastBooking = bookingRepository.findByItemAndItemOwnerIdAndEndBeforeOrderByStartDesc(item, userId, LocalDateTime.now())
+                .stream().filter(x -> x.getStatus().equals(BookingStatus.APPROVED)).findFirst();
+        Optional<Booking> nextBooking = bookingRepository.findByItemAndItemOwnerIdAndStartAfterOrderByStartAsc(item, userId, LocalDateTime.now())
+                .stream().filter(x -> x.getStatus().equals(BookingStatus.APPROVED)).findFirst();
+        if (nextBooking.isPresent() && lastBooking.isPresent()) {
+            itemDto.setLastBooking(ItemMapper.getItemBookingDto(lastBooking.get()));
+            itemDto.setNextBooking(ItemMapper.getItemBookingDto(nextBooking.get()));
+        }
+        return itemDto;
     }
 
     @Override
     public List<ItemDto> findAll(Long userId) {
         log.info("ItemServiceImpl: получение списка всех элементов для пользователя с id: {}", userId);
         User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("Пользователь с id: " + userId + " не найден"));
-        return itemRepository.findByOwner(user).stream().map(ItemMapper::getItemDto).collect(Collectors.toList());
-        //return itemRepository.findByOwner(userId).stream().map(ItemMapper::getItemDto).collect(Collectors.toList());
-        // return itemStorage.findAll().stream().filter(x -> x.getUserId() == userId).map(ItemMapper::getItemDto).collect(Collectors.toList());
+
+        return itemRepository.findByOwner(user).stream().map(this::getBooking).collect(Collectors.toList());
     }
 
 
