@@ -16,7 +16,7 @@ public class InMemoryItemStorage implements ItemStorage {
 
     private final Map<Long, Item> storage;
 
-    private long itemId;
+    private Long itemId;
 
     private Long implement() {
         return ++itemId;
@@ -82,7 +82,7 @@ public class InMemoryItemStorage implements ItemStorage {
     public void deleteByUserId(Long userId) {
         log.info("InMemoryItemStorage: удаление элементов пользователя с id: {}", userId);
         for (Item item : storage.values()) {
-            if (item.getOwner().getId() == userId) {
+            if (item.getOwner().getId().equals(userId)) {
                 storage.remove(item.getId());
             }
         }
