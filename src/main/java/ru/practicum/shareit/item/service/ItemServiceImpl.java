@@ -51,6 +51,7 @@ public class ItemServiceImpl implements ItemService {
         return ItemMapper.getItemDto(createdItem);
     }
 
+    @Transactional
     @Override
     public ItemDto findById(Long itemId, Long userId) {
         log.info("ItemServiceImpl: получение элемента по id: {}", itemId);
@@ -118,6 +119,7 @@ public class ItemServiceImpl implements ItemService {
         return itemDto;
     }
 
+    @Transactional
     @Override
     public List<ItemDto> findAll(Long userId) {
         log.info("ItemServiceImpl: получение списка всех элементов для пользователя с id: {}", userId);
