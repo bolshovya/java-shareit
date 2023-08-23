@@ -131,6 +131,7 @@ public class ItemServiceImpl implements ItemService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
     @Override
     public ItemDto update(Long itemId, Long userId, ItemDto itemDtoUpdate) {
         log.info("ItemServiceImpl: обновление данных элемента с id: {}", itemId);
@@ -175,6 +176,7 @@ public class ItemServiceImpl implements ItemService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
     @Override
     public CommentDto createComment(CommentDto commentDto, Long itemId, Long userId) {
         log.info("ItemServiceImpl: сохранение комментария: {} для элемента. Item Id: {}, User Id: {}", commentDto, itemId, userId);

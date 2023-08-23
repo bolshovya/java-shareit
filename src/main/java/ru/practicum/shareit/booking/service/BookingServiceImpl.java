@@ -62,6 +62,7 @@ public class BookingServiceImpl implements BookingService {
         }
     }
 
+    @Transactional
     @Override
     public BookingDto updateBookingStatus(Long bookingId, String approved, Long userId) {
         User owner = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);

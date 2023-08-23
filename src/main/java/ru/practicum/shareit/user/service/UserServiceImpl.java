@@ -25,6 +25,7 @@ public class UserServiceImpl implements UserService {
 
     private final ItemRepository itemRepository;
 
+    @Transactional
     @Override
     public UserDto create(UserDto userDto) {
         log.info("UserServiceImpl: сохранение пользователя: ", userDto);
@@ -51,6 +52,7 @@ public class UserServiceImpl implements UserService {
         return userRepository.findAll().stream().map(UserMapper::getUserDto).collect(Collectors.toList());
     }
 
+    @Transactional
     @Override
     public UserDto update(UserDto userDto) {
         UserDto userFromDb = findById(userDto.getId());
@@ -66,7 +68,6 @@ public class UserServiceImpl implements UserService {
         return UserMapper.getUserDto(updatedUser);
     }
 
-    @Transactional
     @Override
     public void delete(Long id) {
         findById(id);
