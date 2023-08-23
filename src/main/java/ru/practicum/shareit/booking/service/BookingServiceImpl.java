@@ -127,11 +127,11 @@ public class BookingServiceImpl implements BookingService {
                 return bookingRepository.findAllByBookerOrderByStartDesc(booker)
                         .stream().map(BookingMapper::getBookingDto).collect(Collectors.toList());
 
-            case "CURRENT":
+            case "PAST":
                 return bookingRepository.findAllByBookerAndEndBeforeOrderByStartDesc(booker, time)
                         .stream().map(BookingMapper::getBookingDto).collect(Collectors.toList());
 
-            case "PAST":
+            case "CURRENT":
                 return bookingRepository.findAllByBookerAndStartBeforeAndEndAfterOrderByStartDesc(booker, time, time)
                         .stream().map(BookingMapper::getBookingDto).collect(Collectors.toList());
 
@@ -163,11 +163,11 @@ public class BookingServiceImpl implements BookingService {
                 return bookingRepository.findAllByItemOwnerOrderByStartDesc(owner)
                         .stream().map(BookingMapper::getBookingDto).collect(Collectors.toList());
 
-            case "CURRENT":
+            case "PAST":
                 return bookingRepository.findAllByItemOwnerAndEndBeforeOrderByStartDesc(owner, time)
                         .stream().map(BookingMapper::getBookingDto).collect(Collectors.toList());
 
-            case "PAST":
+            case "CURRENT":
                 return bookingRepository.findAllByItemOwnerAndStartBeforeAndEndAfterOrderByStartDesc(owner, time, time)
                         .stream().map(BookingMapper::getBookingDto).collect(Collectors.toList());
 

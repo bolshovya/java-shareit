@@ -7,6 +7,7 @@ import ru.practicum.shareit.item.Item;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 @Data
 @Builder
@@ -28,4 +29,6 @@ public class ItemDto {
     ItemBookingDto lastBooking;
 
     ItemBookingDto nextBooking;
+
+    List<CommentDto> comments;
 }

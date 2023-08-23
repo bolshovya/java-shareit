@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.service.ItemService;
 
@@ -36,7 +37,6 @@ public class ItemController {
         return itemService.findAll(userId);
     }
 
-
     @PatchMapping("/{itemId}")
     public ItemDto update(@RequestBody ItemDto itemDto, @PathVariable Long itemId,
                           @RequestHeader("X-Sharer-User-Id") Long userId) {
@@ -44,13 +44,18 @@ public class ItemController {
         return itemService.update(itemId, userId, itemDto);
     }
 
-
-
     @GetMapping("/search")
     public List<ItemDto> search(@RequestParam String text, @RequestHeader("X-Sharer-User-Id") Long userId) {
         log.info("ItemController GET: поиск элементов содержащих: {} для пользователя с id: {}", text, userId);
         return itemService.search(text, userId);
     }
 
-
+    /**
+     * POST /items/{itemId}/comment
+     */
+    @PostMapping("/{itemId}/comment")
+    public CommentDto createComment(@Valid @RequestBody CommentDto commentDto, @PathVariable Long itemId, @RequestHeader("X-Sharer-User-Id") Long userId) {
+        log.info("ItemController POST: сохранение комментария: {} для элемента. Item Id: {}, User Id: {}", commentDto, itemId, userId);
+        return itemService.createComment(commentDto, itemId, userId);
+    }
 }
