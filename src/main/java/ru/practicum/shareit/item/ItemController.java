@@ -50,9 +50,6 @@ public class ItemController {
         return itemService.search(text, userId);
     }
 
-    /**
-     * POST /items/{itemId}/comment
-     */
     @PostMapping("/{itemId}/comment")
     public CommentDto createComment(@Valid @RequestBody CommentDto commentDto, @PathVariable Long itemId, @RequestHeader("X-Sharer-User-Id") Long userId) {
         log.info("ItemController POST: сохранение комментария: {} для элемента. Item Id: {}, User Id: {}", commentDto, itemId, userId);

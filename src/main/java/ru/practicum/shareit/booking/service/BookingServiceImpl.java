@@ -52,17 +52,6 @@ public class BookingServiceImpl implements BookingService {
         }
         bookingToDb.setItem(item);
         return BookingMapper.getBookingDto(bookingRepository.save(bookingToDb));
-        /*
-        bookingDto.setBooker(booker);
-        Item item = itemRepository.findById(bookingDto.getItemId()).orElseThrow(ItemNotFoundException::new);
-        if (!item.getAvailable()) {
-            throw new ItemValidationException("Элемент с id: " + item.getId() + " не доступен");
-        }
-        bookingDto.setItem(item);
-        Booking createdBooking = bookingRepository.save(BookingMapper.getBooking(bookingDto));
-        return BookingMapper.getBookingDto(createdBooking);
-
-         */
     }
 
     private void validation(BookingRequestDto bookingRequestDto) {
@@ -76,14 +65,13 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public BookingDto updateBookingStatus(Long bookingId, String approved, Long userId) {
         User owner = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
-
         Booking booking = bookingRepository.findById(bookingId).orElseThrow(BookingNotFoundException::new);
+
         User ownerBooking = booking.getItem().getOwner();
 
         if (!ownerBooking.getId().equals(userId)) {
             throw new BookingNotFoundException("Пользователь с id: " + userId + "не является владельцем.");
         }
-
         if (booking.getStatus() != BookingStatus.WAITING) {
             throw new BookingValidationException();
         }
@@ -98,7 +86,6 @@ public class BookingServiceImpl implements BookingService {
             default:
                 throw new IllegalStateException("Unexpected value: " + approved);
         }
-
         return BookingMapper.getBookingDto(bookingRepository.save(booking));
     }
 
@@ -140,8 +127,6 @@ public class BookingServiceImpl implements BookingService {
                         .stream().map(BookingMapper::getBookingDto).collect(Collectors.toList());
 
             case "WAITING":
-                return bookingRepository.findAllByBookerAndStatusOrderByStartDesc(booker, BookingStatus.valueOf(state))
-                        .stream().map(BookingMapper::getBookingDto).collect(Collectors.toList());
 
             case "REJECTED":
                 return bookingRepository.findAllByBookerAndStatusOrderByStartDesc(booker, BookingStatus.valueOf(state))
@@ -176,8 +161,6 @@ public class BookingServiceImpl implements BookingService {
                         .stream().map(BookingMapper::getBookingDto).collect(Collectors.toList());
 
             case "WAITING":
-                return bookingRepository.findAllByItemOwnerAndStatusOrderByStartDesc(owner, BookingStatus.valueOf(state))
-                        .stream().map(BookingMapper::getBookingDto).collect(Collectors.toList());
 
             case "REJECTED":
                 return bookingRepository.findAllByItemOwnerAndStatusOrderByStartDesc(owner, BookingStatus.valueOf(state))
@@ -187,6 +170,4 @@ public class BookingServiceImpl implements BookingService {
                 throw new UnknownStateException(state);
         }
     }
-
-
 }

@@ -72,13 +72,9 @@ public class ItemServiceImpl implements ItemService {
                 .filter(x -> x.getStart().isAfter(LocalDateTime.now()))
                 .min(Comparator.comparing(Booking::getStart));
 
-        if (lastBooking.isPresent()) {
-            itemDto.setLastBooking(ItemMapper.getItemBookingDto(lastBooking.get()));
-        }
+        lastBooking.ifPresent(booking -> itemDto.setLastBooking(ItemMapper.getItemBookingDto(booking)));
 
-        if (nextBooking.isPresent()) {
-            itemDto.setNextBooking(ItemMapper.getItemBookingDto(nextBooking.get()));
-        }
+        nextBooking.ifPresent(booking -> itemDto.setNextBooking(ItemMapper.getItemBookingDto(booking)));
 
         itemDto.setComments(setComment(itemId));
         return itemDto;
@@ -91,7 +87,7 @@ public class ItemServiceImpl implements ItemService {
                 .collect(Collectors.toList());
     }
 
-    private ItemDto setComment(ItemDto itemDto) {
+    private ItemDto addComment(ItemDto itemDto) {
         itemDto.setComments(commentRepository.findAllByItemId(itemDto.getId())
                 .stream()
                 .map(CommentMapper::getCommentDto)
@@ -99,7 +95,7 @@ public class ItemServiceImpl implements ItemService {
         return itemDto;
     }
 
-    private ItemDto getBooking(Item item) {
+    private ItemDto addBooking(Item item) {
         Long userId = item.getOwner().getId();
         ItemDto itemDto = ItemMapper.getItemDto(item);
 
@@ -116,13 +112,9 @@ public class ItemServiceImpl implements ItemService {
                 .filter(x -> x.getStart().isAfter(LocalDateTime.now()))
                 .min(Comparator.comparing(Booking::getStart));
 
-        if (lastBooking.isPresent()) {
-            itemDto.setLastBooking(ItemMapper.getItemBookingDto(lastBooking.get()));
-        }
+        lastBooking.ifPresent(booking -> itemDto.setLastBooking(ItemMapper.getItemBookingDto(booking)));
 
-        if (nextBooking.isPresent()) {
-            itemDto.setNextBooking(ItemMapper.getItemBookingDto(nextBooking.get()));
-        }
+        nextBooking.ifPresent(booking -> itemDto.setNextBooking(ItemMapper.getItemBookingDto(booking)));
         return itemDto;
     }
 
@@ -134,17 +126,14 @@ public class ItemServiceImpl implements ItemService {
 
         return itemRepository.findByOwner(user)
                 .stream()
-                .map(this::getBooking)
-                .map(this::setComment)
+                .map(this::addBooking)
+                .map(this::addComment)
                 .collect(Collectors.toList());
     }
-
 
     @Override
     public ItemDto update(Long itemId, Long userId, ItemDto itemDtoUpdate) {
         log.info("ItemServiceImpl: обновление данных элемента с id: {}", itemId);
-
-        // ItemDto itemFromDb = findById(itemId);
 
         Item itemFromDb = itemRepository.findById(itemId)
                 .orElseThrow(() -> new ItemNotFoundException("Элемент с id: " + itemId + " не найден"));
@@ -166,29 +155,8 @@ public class ItemServiceImpl implements ItemService {
         itemToDb.setId(itemId);
         itemToDb.setOwner(userFromDb);
 
-
-        /*
-        if (itemToDb.getName() == null) {
-            itemToDb.setName(itemFromDb.getName());
-        }
-        if (itemToDb.getDescription() == null) {
-            itemToDb.setDescription(itemFromDb.getDescription());
-        }
-        if (itemToDb.getAvailable() == null) {
-            itemToDb.setAvailable(itemFromDb.getAvailable());
-        }
-
-         */
-        /*
-        if (!itemFromDb.getOwner().getId().equals(userId)) {
-            throw new ItemNotFoundException("id пользователей не совпадают");
-        }
-
-         */
-        //itemDtoUpdate.setOwner(userFromDb);
         return ItemMapper.getItemDto(itemRepository.save(itemToDb));
     }
-
 
     @Override
     public List<ItemDto> search(String text, Long userId) {
@@ -217,19 +185,12 @@ public class ItemServiceImpl implements ItemService {
         Item item = itemRepository.findById(itemId)
                 .orElseThrow(() -> new ItemNotFoundException("Элемент с id: " + itemId + " не найден"));
 
-
-
         if (bookingRepository.findAllByBookerAndStatusAndStartBefore(author, BookingStatus.APPROVED, LocalDateTime.now()).isEmpty()) {
             throw new ItemValidationException("Пользователь с id: " + userId + " не брал в аренду элемент с id: " + itemId);
         }
 
-
-        // if (bookingRepository.findAllByBookerAndStartAfterOrderByStartDesc(author, LocalDateTime.now()))
-
         commentToDb.setAuthor(author);
         commentToDb.setItem(item);
         return CommentMapper.getCommentDto(commentRepository.save(commentToDb));
-
     }
-
 }
