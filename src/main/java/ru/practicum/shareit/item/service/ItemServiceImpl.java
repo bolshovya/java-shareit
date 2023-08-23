@@ -38,8 +38,8 @@ public class ItemServiceImpl implements ItemService {
     private final BookingRepository bookingRepository;
     private final CommentRepository commentRepository;
 
-    @Transactional
     @Override
+    @Transactional
     public ItemDto create(ItemDto itemDto, Long userId) {
         log.info("ItemServiceImpl: сохранение элемента: {}, для пользователя в с id: {}", itemDto, userId);
         User userFromDb = userRepository.findById(userId)
@@ -51,8 +51,8 @@ public class ItemServiceImpl implements ItemService {
         return ItemMapper.getItemDto(createdItem);
     }
 
-    @Transactional
     @Override
+    @Transactional(readOnly = true)
     public ItemDto findById(Long itemId, Long userId) {
         log.info("ItemServiceImpl: получение элемента по id: {}", itemId);
         Item itemFromDb = itemRepository.findById(itemId)
@@ -119,8 +119,8 @@ public class ItemServiceImpl implements ItemService {
         return itemDto;
     }
 
-    @Transactional
     @Override
+    @Transactional(readOnly = true)
     public List<ItemDto> findAll(Long userId) {
         log.info("ItemServiceImpl: получение списка всех элементов для пользователя с id: {}", userId);
         User user = userRepository.findById(userId)
@@ -133,8 +133,8 @@ public class ItemServiceImpl implements ItemService {
                 .collect(Collectors.toList());
     }
 
-    @Transactional
     @Override
+    @Transactional
     public ItemDto update(Long itemId, Long userId, ItemDto itemDtoUpdate) {
         log.info("ItemServiceImpl: обновление данных элемента с id: {}", itemId);
 
@@ -162,6 +162,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<ItemDto> search(String text, Long userId) {
         log.info("ItemServiceImpl: поиск элементов содержащих: {}", text);
 
@@ -178,8 +179,8 @@ public class ItemServiceImpl implements ItemService {
                 .collect(Collectors.toList());
     }
 
-    @Transactional
     @Override
+    @Transactional
     public CommentDto createComment(CommentDto commentDto, Long itemId, Long userId) {
         log.info("ItemServiceImpl: сохранение комментария: {} для элемента. Item Id: {}, User Id: {}", commentDto, itemId, userId);
         commentDto.setCreated(LocalDateTime.now());
