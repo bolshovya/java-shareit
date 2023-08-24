@@ -64,7 +64,7 @@ public class BookingController {
      * Бронирования должны возвращаться отсортированными по дате от более новых к более старым.
      */
     @GetMapping
-    public List<BookingDto> getAllByBooker(@RequestParam(value = "state", defaultValue = "ALL", required = false) String state,
+    public List<BookingDto> getAllByBooker(@RequestParam(value = "state", defaultValue = "ALL") String state,
                                             @RequestHeader("X-Sharer-User-Id") Long userId) {
         log.info("BookingController: запрос всех бронирований({}) пользователя с id: {}", state, userId);
         return bookingService.getAllByBooker(state, userId);
@@ -77,7 +77,7 @@ public class BookingController {
      * Работа параметра state аналогична его работе в предыдущем сценарии.
      */
     @GetMapping("/owner")
-    public List<BookingDto> getAllBookingsForAllItemsOfOwner(@RequestParam(value = "state", defaultValue = "ALL", required = false) String state,
+    public List<BookingDto> getAllBookingsForAllItemsOfOwner(@RequestParam(value = "state", defaultValue = "ALL") String state,
                                            @RequestHeader("X-Sharer-User-Id") Long userId) {
         log.info("BookingController: запрос всех бронирований({}) пользователя с id: {}", state, userId);
         return bookingService.getAllBookingsForAllItemsOfOwner(state, userId);
