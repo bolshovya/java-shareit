@@ -1,14 +1,35 @@
 package ru.practicum.shareit.item;
 
-import lombok.Builder;
-import lombok.Data;
+import lombok.*;
+import ru.practicum.shareit.user.User;
 
-@Data
+import javax.persistence.*;
+
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
 @Builder
+@Entity
+@Table(name = "items")
 public class Item {
-    private long id;
-    private long userId; // владелец
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    private Long id;
+
+    @ManyToOne
+    @JoinColumn(name = "owner", referencedColumnName = "id")
+    // @JoinColumn(name = "id")
+    private User owner; // владелец
+
+    @Column(name = "name")
     private String name;
+
+    @Column(name = "description")
     private String description;
+
+    @Column(name = "available")
     private Boolean available; // Статус должен проставлять владелец
 }

@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.service.ItemService;
 
@@ -25,9 +26,9 @@ public class ItemController {
     }
 
     @GetMapping("/{itemId}")
-    public ItemDto findById(@PathVariable Long itemId) {
+    public ItemDto findById(@PathVariable Long itemId, @RequestHeader("X-Sharer-User-Id") Long userId) {
         log.info("ItemController GET: получение элемента по id: {}", itemId);
-        return itemService.findById(itemId);
+        return itemService.findById(itemId, userId);
     }
 
     @GetMapping
@@ -49,5 +50,9 @@ public class ItemController {
         return itemService.search(text, userId);
     }
 
-
+    @PostMapping("/{itemId}/comment")
+    public CommentDto createComment(@Valid @RequestBody CommentDto commentDto, @PathVariable Long itemId, @RequestHeader("X-Sharer-User-Id") Long userId) {
+        log.info("ItemController POST: сохранение комментария: {} для элемента. Item Id: {}, User Id: {}", commentDto, itemId, userId);
+        return itemService.createComment(commentDto, itemId, userId);
+    }
 }
