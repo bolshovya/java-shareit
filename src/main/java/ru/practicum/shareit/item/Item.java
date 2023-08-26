@@ -1,6 +1,7 @@
 package ru.practicum.shareit.item;
 
 import lombok.*;
+import ru.practicum.shareit.request.ItemRequest;
 import ru.practicum.shareit.user.User;
 
 import javax.persistence.*;
@@ -32,4 +33,8 @@ public class Item {
 
     @Column(name = "available")
     private Boolean available; // Статус должен проставлять владелец
+
+    @ManyToOne
+    @JoinColumn(name = "requestor_id", referencedColumnName = "id")
+    private ItemRequest request;
 }

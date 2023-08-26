@@ -8,6 +8,7 @@ import ru.practicum.shareit.booking.Booking;
 import ru.practicum.shareit.booking.BookingStatus;
 import ru.practicum.shareit.booking.storage.BookingRepository;
 import ru.practicum.shareit.exception.ItemNotFoundException;
+import ru.practicum.shareit.exception.ItemRequestNotFoundException;
 import ru.practicum.shareit.exception.ItemValidationException;
 import ru.practicum.shareit.exception.UserNotFoundException;
 import ru.practicum.shareit.item.Comment;
@@ -18,6 +19,8 @@ import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemMapper;
 import ru.practicum.shareit.item.storage.CommentRepository;
 import ru.practicum.shareit.item.storage.ItemRepository;
+import ru.practicum.shareit.request.ItemRequest;
+import ru.practicum.shareit.request.storage.ItemRequestRepository;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.storage.UserRepository;
 
@@ -37,6 +40,7 @@ public class ItemServiceImpl implements ItemService {
     private final UserRepository userRepository;
     private final BookingRepository bookingRepository;
     private final CommentRepository commentRepository;
+    private final ItemRequestRepository itemRequestRepository;
 
     @Override
     @Transactional
@@ -46,6 +50,10 @@ public class ItemServiceImpl implements ItemService {
                 .orElseThrow(UserNotFoundException::new);
         Item itemToDb = ItemMapper.getItem(itemDto);
         itemToDb.setOwner(userFromDb);
+        Optional<ItemRequest> itemRequestFromDb = itemRequestRepository.findByRequestorId(userId);
+        if (itemRequestFromDb.isPresent()) {
+            itemToDb.setRequest(itemRequestFromDb.get());
+        }
         Item createdItem = itemRepository.save(itemToDb);
         log.info("ItemServiceImpl: сохранен элемент: {}", itemDto);
         return ItemMapper.getItemDto(createdItem);

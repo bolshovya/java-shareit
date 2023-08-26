@@ -31,4 +31,14 @@ public class ItemMapper {
                 .bookerId(booking.getBooker().getId())
                 .build();
     }
+
+    public static ItemRequestResponseDto getItemRequestResponseDto(Item item) {
+        return ItemRequestResponseDto.builder()
+                .id(item.getId())
+                .name(item.getName())
+                .description(item.getDescription())
+                .requestId(item.getRequest().getId())
+                .available(item.getAvailable())
+                .build();
+    }
 }
