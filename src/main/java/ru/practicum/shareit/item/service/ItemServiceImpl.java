@@ -19,7 +19,6 @@ import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemMapper;
 import ru.practicum.shareit.item.storage.CommentRepository;
 import ru.practicum.shareit.item.storage.ItemRepository;
-import ru.practicum.shareit.request.ItemRequest;
 import ru.practicum.shareit.request.storage.ItemRequestRepository;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.storage.UserRepository;
@@ -50,10 +49,11 @@ public class ItemServiceImpl implements ItemService {
                 .orElseThrow(UserNotFoundException::new);
         Item itemToDb = ItemMapper.getItem(itemDto);
         itemToDb.setOwner(userFromDb);
-        Optional<ItemRequest> itemRequestFromDb = itemRequestRepository.findByRequestorId(userId);
-        if (itemRequestFromDb.isPresent()) {
-            itemToDb.setRequest(itemRequestFromDb.get());
+
+        if (itemDto.getRequestId() != null) {
+            itemToDb.setRequest(itemRequestRepository.findById(itemDto.getRequestId()).orElseThrow(ItemRequestNotFoundException::new));
         }
+
         Item createdItem = itemRepository.save(itemToDb);
         log.info("ItemServiceImpl: сохранен элемент: {}", itemDto);
         return ItemMapper.getItemDto(createdItem);

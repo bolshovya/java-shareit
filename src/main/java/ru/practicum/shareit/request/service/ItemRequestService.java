@@ -10,4 +10,6 @@ public interface ItemRequestService {
     List<ItemRequestDto> findAllOfYour(Long userId, Integer from, Integer size);
 
     List<ItemRequestDto> findAllOfOther(Long userId, Integer from, Integer size);
+
+    ItemRequestDto findById(Long requestId, Long userId);
 }

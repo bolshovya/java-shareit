@@ -3,15 +3,16 @@ package ru.practicum.shareit.request;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.request.service.ItemRequestService;
-import ru.practicum.shareit.request.storage.ItemRequestRepository;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import java.util.List;
 
+@Validated
 @RestController
 @RequestMapping(path = "/requests")
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
@@ -40,7 +41,7 @@ public class ItemRequestController {
     @GetMapping
     public List<ItemRequestDto> findAllOfYour(@RequestHeader("X-Sharer-User-Id") Long userId,
                                               @RequestParam(value = "from", defaultValue = "0", required = false) @Min(0) Integer from,
-                                              @RequestParam(value = "size", defaultValue = "1", required = false) @Min(1) Integer size) {
+                                              @RequestParam(value = "size", defaultValue = "10", required = false) @Min(1) Integer size) {
         log.info("ItemRequestController GET: получение списка всех запросов для пользователя с id: {}", userId);
         return itemRequestService.findAllOfYour(userId, from, size);
     }
@@ -55,7 +56,7 @@ public class ItemRequestController {
     @GetMapping("/all")
     public List<ItemRequestDto> findAllOfOther(@RequestHeader("X-Sharer-User-Id") Long userId,
                                                @RequestParam(value = "from", defaultValue = "0", required = false) @Min(0) Integer from,
-                                               @RequestParam(value = "size", defaultValue = "1", required = false) @Min(1) Integer size) {
+                                               @RequestParam(value = "size", defaultValue = "10", required = false) @Min(1) Integer size) {
         log.info("ItemRequestController GET: получение списка всех запросов для пользователя с id: {}", userId);
         return itemRequestService.findAllOfOther(userId, from, size);
     }
@@ -65,8 +66,9 @@ public class ItemRequestController {
      * в том же формате, что и в эндпоинте GET /requests.
      * Посмотреть данные об отдельном запросе может любой пользователь.
      */
-    //@GetMapping
-    public ItemRequestDto findById() {
-        return null;
+    @GetMapping("/{requestId}")
+    public ItemRequestDto findById(@PathVariable Long requestId, @RequestHeader("X-Sharer-User-Id") Long userId) {
+        log.info("ItemRequestController GET: получение запроса с id: {}, для пользователя с id:", requestId, userId);
+        return itemRequestService.findById(requestId, userId);
     }
 }

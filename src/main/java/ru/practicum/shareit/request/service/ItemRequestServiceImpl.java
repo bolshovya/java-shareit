@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import ru.practicum.shareit.exception.ItemNotFoundException;
 import ru.practicum.shareit.exception.UserNotFoundException;
 import ru.practicum.shareit.item.Item;
 import ru.practicum.shareit.item.dto.ItemMapper;
@@ -47,7 +48,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
         log.info("ItemRequestServiceImpl: получение списка всех запросов для пользователя с id: {}", userId);
         User userFromDb = userRepository.findById(userId)
                 .orElseThrow(UserNotFoundException::new);
-        return itemRequestRepository.findAllByRequestor(userFromDb, PageRequest.of(from, size, Sort.by("created").ascending()))
+        return itemRequestRepository.findAllByRequestor(userFromDb, PageRequest.of(from/size, size, Sort.by("created").ascending()))
                 .stream()
                 .map(ItemRequestMapper::getItemRequestDto)
                 .map(this::addItem)
@@ -69,11 +70,23 @@ public class ItemRequestServiceImpl implements ItemRequestService {
         log.info("ItemRequestServiceImpl: получение списка всех запросов для пользователя с id: {}", userId);
         User userFromDb = userRepository.findById(userId)
                 .orElseThrow(UserNotFoundException::new);
-        return itemRequestRepository.findAllByRequestorNot(userFromDb, PageRequest.of(from, size, Sort.by("created").ascending()))
+        return itemRequestRepository.findAllByRequestorNot(userFromDb, PageRequest.of(from/size, size, Sort.by("created").ascending()))
                 .stream()
                 .map(ItemRequestMapper::getItemRequestDto)
                 .map(this::addItem)
                 .collect(Collectors.toList());
 
+    }
+
+    @Override
+    public ItemRequestDto findById(Long requestId, Long userId) {
+        log.info("ItemRequestServiceImpl: получение запроса с id: {}", requestId);
+        User userFromDb = userRepository.findById(userId)
+                .orElseThrow(UserNotFoundException::new);
+        ItemRequest itemRequestFromDb = itemRequestRepository.findById(requestId)
+                .orElseThrow(ItemNotFoundException::new);
+        ItemRequestDto itemRequestDto = ItemRequestMapper.getItemRequestDto(itemRequestFromDb);
+        addItem(itemRequestDto);
+        return itemRequestDto;
     }
 }
