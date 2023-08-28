@@ -29,7 +29,10 @@ public class BookingController {
      * После создания запрос находится в статусе WAITING — «ожидает подтверждения».
      */
     @PostMapping
-    public BookingDto create(@Valid @RequestBody BookingRequestDto bookingRequestDto, @RequestHeader("X-Sharer-User-Id") Long userId) {
+    public BookingDto create(
+            @Valid @RequestBody BookingRequestDto bookingRequestDto,
+            @RequestHeader("X-Sharer-User-Id") Long userId
+    ) {
         log.info("BookingController POST: сохранение бронирования: {}, для пользователя в с id: {}", bookingRequestDto, userId);
         return bookingService.create(bookingRequestDto, userId);
     }
@@ -40,8 +43,11 @@ public class BookingController {
     * Эндпоинт — PATCH /bookings/{bookingId}?approved={approved}, параметр approved может принимать значения true или false.
      */
     @PatchMapping("/{bookingId}")
-    public BookingDto updateBookingStatus(@PathVariable Long bookingId, @RequestParam String approved,
-                          @RequestHeader("X-Sharer-User-Id") Long userId) {
+    public BookingDto updateBookingStatus(
+            @PathVariable Long bookingId,
+            @RequestParam String approved,
+            @RequestHeader("X-Sharer-User-Id") Long userId
+    ) {
         return bookingService.updateBookingStatus(bookingId, approved, userId);
     }
 
@@ -51,8 +57,10 @@ public class BookingController {
     * Эндпоинт — GET /bookings/{bookingId}.
      */
     @GetMapping("/{bookingId}")
-    public BookingDto getBooking(@PathVariable Long bookingId,
-                                 @RequestHeader("X-Sharer-User-Id") Long userId) {
+    public BookingDto getBooking(
+            @PathVariable Long bookingId,
+            @RequestHeader("X-Sharer-User-Id") Long userId
+    ) {
         return bookingService.getBooking(bookingId, userId);
     }
 
@@ -68,10 +76,12 @@ public class BookingController {
      * Бронирования должны возвращаться отсортированными по дате от более новых к более старым.
      */
     @GetMapping
-    public List<BookingDto> getAllByBooker(@RequestParam(value = "state", defaultValue = "ALL") String state,
-                                           @RequestHeader("X-Sharer-User-Id") Long userId,
-                                           @RequestParam(value = "from", defaultValue = "0", required = false) @Min(0) Integer from,
-                                           @RequestParam(value = "size", defaultValue = "10", required = false) @Min(1) Integer size) {
+    public List<BookingDto> getAllByBooker(
+            @RequestParam(value = "state", defaultValue = "ALL") String state,
+            @RequestHeader("X-Sharer-User-Id") Long userId,
+            @RequestParam(value = "from", defaultValue = "0", required = false) @Min(0) Integer from,
+            @RequestParam(value = "size", defaultValue = "10", required = false) @Min(1) Integer size
+    ) {
         log.info("BookingController: запрос всех бронирований({}) пользователя с id: {}", state, userId);
         return bookingService.getAllByBooker(state, userId, from, size);
     }
@@ -84,10 +94,11 @@ public class BookingController {
      */
     @GetMapping("/owner")
     public List<BookingDto> getAllBookingsForAllItemsOfOwner(
-                                          @RequestParam(value = "state", defaultValue = "ALL") String state,
-                                          @RequestHeader("X-Sharer-User-Id") Long userId,
-                                          @RequestParam(value = "from", defaultValue = "0", required = false) @Min(0) Integer from,
-                                          @RequestParam(value = "size", defaultValue = "10", required = false) @Min(1) Integer size) {
+            @RequestParam(value = "state", defaultValue = "ALL") String state,
+            @RequestHeader("X-Sharer-User-Id") Long userId,
+            @RequestParam(value = "from", defaultValue = "0", required = false) @Min(0) Integer from,
+            @RequestParam(value = "size", defaultValue = "10", required = false) @Min(1) Integer size
+    ) {
         log.info("BookingController: запрос всех бронирований({}) пользователя с id: {}", state, userId);
         return bookingService.getAllBookingsForAllItemsOfOwner(state, userId, from, size);
     }

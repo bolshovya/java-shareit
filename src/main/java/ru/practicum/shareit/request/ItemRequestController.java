@@ -26,7 +26,10 @@ public class ItemRequestController {
      * Основная часть запроса — текст запроса, где пользователь описывает, какая именно вещь ему нужна.
      */
     @PostMapping
-    public ItemRequestDto create(@Valid @RequestBody ItemRequestDto itemRequestDto, @RequestHeader("X-Sharer-User-Id") Long userId) {
+    public ItemRequestDto create(
+            @Valid @RequestBody ItemRequestDto itemRequestDto,
+            @RequestHeader("X-Sharer-User-Id") Long userId
+    ) {
         log.info("ItemRequestController POST: сохранение запроса: {}, для пользователя с id: {}", itemRequestDto, userId);
         return itemRequestService.create(itemRequestDto, userId);
     }
@@ -39,9 +42,11 @@ public class ItemRequestController {
      * Запросы должны возвращаться в отсортированном порядке от более новых к более старым.
      */
     @GetMapping
-    public List<ItemRequestDto> findAllOfYour(@RequestHeader("X-Sharer-User-Id") Long userId,
-                                              @RequestParam(value = "from", defaultValue = "0", required = false) @Min(0) Integer from,
-                                              @RequestParam(value = "size", defaultValue = "10", required = false) @Min(1) Integer size) {
+    public List<ItemRequestDto> findAllOfYour(
+            @RequestHeader("X-Sharer-User-Id") Long userId,
+            @RequestParam(value = "from", defaultValue = "0", required = false) @Min(0) Integer from,
+            @RequestParam(value = "size", defaultValue = "10", required = false) @Min(1) Integer size
+    ) {
         log.info("ItemRequestController GET: получение списка всех запросов для пользователя с id: {}", userId);
         return itemRequestService.findAllOfYour(userId, from, size);
     }
@@ -54,9 +59,11 @@ public class ItemRequestController {
      * Для этого нужно передать два параметра: from — индекс первого элемента, начиная с 0, и size — количество элементов для отображения.
      */
     @GetMapping("/all")
-    public List<ItemRequestDto> findAllOfOther(@RequestHeader("X-Sharer-User-Id") Long userId,
-                                               @RequestParam(value = "from", defaultValue = "0", required = false) @Min(0) Integer from,
-                                               @RequestParam(value = "size", defaultValue = "10", required = false) @Min(1) Integer size) {
+    public List<ItemRequestDto> findAllOfOther(
+            @RequestHeader("X-Sharer-User-Id") Long userId,
+            @RequestParam(value = "from", defaultValue = "0", required = false) @Min(0) Integer from,
+            @RequestParam(value = "size", defaultValue = "10", required = false) @Min(1) Integer size
+    ) {
         log.info("ItemRequestController GET: получение списка всех запросов для пользователя с id: {}", userId);
         return itemRequestService.findAllOfOther(userId, from, size);
     }
@@ -67,7 +74,10 @@ public class ItemRequestController {
      * Посмотреть данные об отдельном запросе может любой пользователь.
      */
     @GetMapping("/{requestId}")
-    public ItemRequestDto findById(@PathVariable Long requestId, @RequestHeader("X-Sharer-User-Id") Long userId) {
+    public ItemRequestDto findById(
+            @PathVariable Long requestId,
+            @RequestHeader("X-Sharer-User-Id") Long userId
+    ) {
         log.info("ItemRequestController GET: получение запроса с id: {}, для пользователя с id:", requestId, userId);
         return itemRequestService.findById(requestId, userId);
     }

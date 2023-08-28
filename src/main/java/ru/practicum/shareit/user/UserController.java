@@ -19,32 +19,43 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping
-    public UserDto create(@Valid @RequestBody UserDto userDto) {
+    public UserDto create(
+            @Valid @RequestBody UserDto userDto
+    ) {
         log.info("UserController POST: сохранение пользователя: {}", userDto);
         return userService.create(userDto);
     }
 
     @GetMapping("/{id}")
-    public UserDto findById(@PathVariable Long id) {
+    public UserDto findById(
+            @PathVariable Long id
+    ) {
         log.info("UserController GET: получение пользователя с id: {}", id);
         return userService.findById(id);
     }
 
     @GetMapping
-    public List<UserDto> findAll() {
+    public List<UserDto> findAll(
+
+    ) {
         log.info("UserController GET: получение списка всех пользователей");
         return userService.findAll();
     }
 
     @PatchMapping("/{userId}")
-    public UserDto update(@RequestBody UserDto userDto, @PathVariable Long userId) {
+    public UserDto update(
+            @RequestBody UserDto userDto,
+            @PathVariable Long userId
+    ) {
         log.info("UserController PATCH: обновление данных пользователя с id: {}", userId);
         userDto.setId(userId);
         return userService.update(userDto);
     }
 
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable Long id) {
+    public void delete(
+            @PathVariable Long id
+    ) {
         log.info("UserController DELETE: удаление пользователя с id: {}", id);
         userService.delete(id);
     }
