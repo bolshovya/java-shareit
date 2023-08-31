@@ -5,11 +5,10 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import ru.practicum.shareit.booking.Booking;
 import ru.practicum.shareit.booking.BookingStatus;
-import ru.practicum.shareit.booking.dto.BookingDto;
-import ru.practicum.shareit.booking.dto.BookingMapper;
 import ru.practicum.shareit.booking.storage.BookingRepository;
 import ru.practicum.shareit.item.Comment;
 import ru.practicum.shareit.item.Item;
+import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.CommentMapper;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemMapper;
@@ -17,14 +16,14 @@ import ru.practicum.shareit.item.storage.CommentRepository;
 import ru.practicum.shareit.item.storage.ItemRepository;
 import ru.practicum.shareit.request.storage.ItemRequestRepository;
 import ru.practicum.shareit.user.User;
-import ru.practicum.shareit.user.service.UserServiceImpl;
 import ru.practicum.shareit.user.storage.UserRepository;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class ItemServiceTest {
 
@@ -117,17 +116,67 @@ class ItemServiceTest {
 
     @Test
     void findAll() {
+        User owner = User.builder().id(1L).name("User1").email("user1@user.com").build();
+        Item item1 = Item.builder().id(1L).name("Дрель").description("Простая дрель").available(true).owner(owner).build();
+        Item item2 = Item.builder().id(2L).name("Шуруповерт").description("Простой шуруповерт").available(true).owner(owner).build();
+
+        Mockito.when(userRepository.findById(owner.getId())).thenReturn(Optional.of(owner));
+        Mockito.when(itemRepository.findByOwner(owner)).thenReturn(List.of(item1, item2));
+
+        ItemDto itemDto1 = ItemMapper.getItemDto(item1);
+        itemDto1.setComments(new ArrayList<>());
+        ItemDto itemDto2 = ItemMapper.getItemDto(item2);
+        itemDto2.setComments(new ArrayList<>());
+
+        assertEquals(itemService.findAll(owner.getId()), List.of(itemDto1, itemDto2));
+        Mockito.verify(userRepository, Mockito.times(1)).findById(Mockito.anyLong());
+        Mockito.verify(itemRepository, Mockito.times(1)).findByOwner(Mockito.any(User.class));
     }
 
     @Test
     void update() {
+        User owner = User.builder().id(1L).name("User1").email("user1@user.com").build();
+        Item item1 = Item.builder().id(1L).name("Дрель").description("Простая дрель").available(true).owner(owner).build();
+        Mockito.when(itemRepository.findById(Mockito.anyLong())).thenReturn(Optional.of(item1));
+        Mockito.when(userRepository.findById(Mockito.anyLong())).thenReturn(Optional.of(owner));
+
+        ItemDto itemUpdate = ItemDto.builder().id(1L).description("Обновленная дрель").build();
+        Item expectedItem = Item.builder().id(1L).name("Дрель").description("Обновленная дрель").available(true).owner(owner).build();
+        Mockito.when(itemRepository.save(Mockito.any(Item.class))).thenReturn(expectedItem);
+
+        assertEquals(itemService.update(1L, 1L, itemUpdate), ItemMapper.getItemDto(expectedItem));
+
+        Mockito.verify(itemRepository, Mockito.times(1)).save(Mockito.any(Item.class));
     }
 
     @Test
     void search() {
+        User owner = User.builder().id(1L).name("User1").email("user1@user.com").build();
+        Item item1 = Item.builder().id(1L).name("Дрель").description("Простая дрель").available(true).owner(owner).build();
+        String text = "простая";
+        Mockito.when(userRepository.findById(Mockito.anyLong())).thenReturn(Optional.of(owner));
+
+        Mockito.when(itemRepository.findByNameOrDescriptionContaining(text)).thenReturn(List.of(item1));
+
+        assertEquals(itemService.search(text, owner.getId()), List.of(ItemMapper.getItemDto(item1)));
+
+        Mockito.verify(itemRepository, Mockito.times(1)).findByNameOrDescriptionContaining(text);
     }
 
     @Test
     void createComment() {
+        LocalDateTime time = LocalDateTime.now();
+        User author = User.builder().id(1L).name("User1").email("user1@user.com").build();
+        Item item1 = Item.builder().id(1L).name("Дрель").description("Простая дрель").available(true).owner(author).build();
+        CommentDto commentFromController = CommentDto.builder().text("text").build();
+        Comment comment = Comment.builder().id(1L).text("text").item(item1).author(author).created(time).build();
+        Mockito.when(itemRepository.findById(Mockito.anyLong())).thenReturn(Optional.of(item1));
+        Mockito.when(userRepository.findById(Mockito.anyLong())).thenReturn(Optional.of(author));
+        Mockito.when(bookingRepository.findAllByBookerAndStatusAndStartBefore(Mockito.any(), Mockito.any(), Mockito.any())).thenReturn(List.of(new Booking()));
+        Mockito.when(commentRepository.save(Mockito.any(Comment.class))).thenReturn(comment);
+        CommentDto expectedComment = CommentDto.builder().id(1L).text("text").authorName("User1").created(time).build();
+
+        assertEquals(itemService.createComment(commentFromController, 1L, 1L), expectedComment);
+        Mockito.verify(commentRepository, Mockito.times(1)).save(Mockito.any(Comment.class));
     }
 }
