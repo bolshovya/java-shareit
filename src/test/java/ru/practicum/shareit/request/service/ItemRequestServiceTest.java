@@ -51,8 +51,8 @@ class ItemRequestServiceTest {
     @Test
     void create() {
         Mockito.when(
-                userRepository.
-                        findById(Mockito.anyLong()))
+                userRepository
+                        .findById(Mockito.anyLong()))
                         .thenReturn(Optional.of(user2));
 
         Mockito.when(

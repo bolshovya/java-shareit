@@ -4,7 +4,6 @@ import lombok.*;
 import ru.practicum.shareit.item.Item;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
 import java.util.List;
 
 @NoArgsConstructor

@@ -132,7 +132,7 @@ class BookingServiceTest {
                         .findAllByBookerOrderByStartDesc(Mockito.any(), Mockito.any()))
                 .thenReturn(List.of(booking));
 
-        bookingService.getAllByBooker( "ALL", 1L, 1, 1);
+        bookingService.getAllByBooker("ALL", 1L, 1, 1);
 
         Mockito.verify(
                 bookingRepository,
@@ -153,7 +153,7 @@ class BookingServiceTest {
                         .findAllByItemOwnerOrderByStartDesc(Mockito.any(), Mockito.any()))
                         .thenReturn(List.of(booking));
 
-        bookingService.getAllBookingsForAllItemsOfOwner( "ALL", 1L, 1, 1);
+        bookingService.getAllBookingsForAllItemsOfOwner("ALL", 1L, 1, 1);
 
         Mockito.verify(
                 bookingRepository,
