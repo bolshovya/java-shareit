@@ -7,7 +7,6 @@ import ru.practicum.shareit.item.Item;
 import ru.practicum.shareit.item.storage.ItemRepository;
 import ru.practicum.shareit.request.ItemRequest;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
-import ru.practicum.shareit.request.dto.ItemRequestMapper;
 import ru.practicum.shareit.request.storage.ItemRequestRepository;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.storage.UserRepository;
@@ -15,8 +14,6 @@ import ru.practicum.shareit.user.storage.UserRepository;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class ItemRequestServiceTest {
 
@@ -47,50 +44,87 @@ class ItemRequestServiceTest {
         user2 = User.builder().id(2L).name("User2").email("user2@user.com").build();
         item1 = Item.builder().id(1L).name("Дрель").description("Простая дрель").available(true).owner(user1).build();
         itemRequestDto = ItemRequestDto.builder().description("Хотел бы воспользоваться щёткой для обуви").build();
-        itemRequest = ItemRequest.builder().id(1L).description("Хотел бы воспользоваться щёткой для обуви").requestor(user2).created(start).build();
+        itemRequest = ItemRequest.builder()
+                .id(1L).description("Хотел бы воспользоваться щёткой для обуви").requestor(user2).created(start).build();
     }
 
     @Test
     void create() {
-        Mockito.when(userRepository.findById(Mockito.anyLong())).thenReturn(Optional.of(user2));
+        Mockito.when(
+                userRepository.
+                        findById(Mockito.anyLong()))
+                        .thenReturn(Optional.of(user2));
 
-        Mockito.when(itemRequestRepository.save(Mockito.any())).thenReturn(itemRequest);
+        Mockito.when(
+                itemRequestRepository
+                        .save(Mockito.any()))
+                        .thenReturn(itemRequest);
 
-        ItemRequestDto itemRequestDtoFromDb = itemRequestService.create(itemRequestDto, 2L);
+        itemRequestService.create(itemRequestDto, 2L);
 
-        Mockito.verify(itemRequestRepository, Mockito.times(1)).save(Mockito.any());
+        Mockito.verify(
+                itemRequestRepository,
+                Mockito.times(1))
+                .save(Mockito.any());
     }
 
     @Test
     void findAllOfYour() {
-        Mockito.when(userRepository.findById(Mockito.anyLong())).thenReturn(Optional.of(user2));
+        Mockito.when(
+                userRepository
+                        .findById(Mockito.anyLong()))
+                        .thenReturn(Optional.of(user2));
 
-        Mockito.when(itemRequestRepository.findAllByRequestor(Mockito.any(), Mockito.any())).thenReturn(List.of(itemRequest));
+        Mockito.when(
+                itemRequestRepository
+                        .findAllByRequestor(Mockito.any(), Mockito.any()))
+                        .thenReturn(List.of(itemRequest));
 
         itemRequestService.findAllOfYour(1L, 1, 1);
 
-        Mockito.verify(itemRequestRepository, Mockito.times(1)).findAllByRequestor(Mockito.any(), Mockito.any());
+        Mockito.verify(
+                itemRequestRepository,
+                Mockito.times(1))
+                .findAllByRequestor(Mockito.any(), Mockito.any());
     }
 
     @Test
     void findAllOfOther() {
-        Mockito.when(userRepository.findById(Mockito.anyLong())).thenReturn(Optional.of(user2));
+        Mockito.when(
+                userRepository
+                        .findById(Mockito.anyLong()))
+                        .thenReturn(Optional.of(user2));
 
-        Mockito.when(itemRequestRepository.findAllByRequestorNot(Mockito.any(), Mockito.any())).thenReturn(List.of(itemRequest));
+        Mockito.when(
+                itemRequestRepository
+                        .findAllByRequestorNot(Mockito.any(), Mockito.any()))
+                        .thenReturn(List.of(itemRequest));
 
         itemRequestService.findAllOfOther(1L, 1, 1);
 
-        Mockito.verify(itemRequestRepository, Mockito.times(1)).findAllByRequestorNot(Mockito.any(), Mockito.any());
+        Mockito.verify(
+                itemRequestRepository,
+                Mockito.times(1))
+                .findAllByRequestorNot(Mockito.any(), Mockito.any());
     }
 
     @Test
     void findById() {
-        Mockito.when(userRepository.findById(Mockito.anyLong())).thenReturn(Optional.of(user2));
+        Mockito.when(
+                userRepository
+                        .findById(Mockito.anyLong()))
+                        .thenReturn(Optional.of(user2));
 
-        Mockito.when(itemRequestRepository.findById(Mockito.anyLong())).thenReturn(Optional.of(itemRequest));
+        Mockito.when(
+                itemRequestRepository
+                        .findById(Mockito.anyLong()))
+                        .thenReturn(Optional.of(itemRequest));
 
         itemRequestService.findById(1L, 1L);
 
-        Mockito.verify(itemRequestRepository, Mockito.times(1)).findById(1L);
+        Mockito.verify(
+                itemRequestRepository,
+                Mockito.times(1))
+                .findById(1L);
     }
 }

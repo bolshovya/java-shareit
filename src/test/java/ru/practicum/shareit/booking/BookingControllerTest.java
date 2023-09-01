@@ -59,23 +59,32 @@ class BookingControllerTest {
 
     @Test
     void create() throws Exception {
-        Mockito.when(bookingService.create(Mockito.any(BookingRequestDto.class), Mockito.anyLong())).thenReturn(bookingDto);
+        Mockito.when(
+                bookingService
+                        .create(Mockito.any(BookingRequestDto.class), Mockito.anyLong()))
+                .thenReturn(bookingDto);
 
         mvc.perform(post("/bookings")
-                        .header("X-Sharer-User-Id", 1L)
-                        .content(mapper.writeValueAsString(bookingRequestDto))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON)
-                        .characterEncoding(StandardCharsets.UTF_8))
+                .header("X-Sharer-User-Id", 1L)
+                .content(mapper.writeValueAsString(bookingRequestDto))
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .characterEncoding(StandardCharsets.UTF_8))
                 .andExpect(status().isOk());
 
-        Mockito.verify(bookingService, Mockito.times(1)).create(Mockito.any(BookingRequestDto.class), Mockito.anyLong());
+        Mockito.verify(
+                bookingService,
+                Mockito.times(1))
+                .create(Mockito.any(BookingRequestDto.class), Mockito.anyLong());
     }
 
     @Test
     void updateBookingStatus() throws Exception {
 
-        Mockito.when(bookingService.updateBookingStatus(Mockito.anyLong(), Mockito.anyString(), Mockito.anyLong())).thenReturn(bookingDto);
+        Mockito.when(
+                bookingService
+                        .updateBookingStatus(Mockito.anyLong(), Mockito.anyString(), Mockito.anyLong()))
+                        .thenReturn(bookingDto);
 
         mvc.perform(patch("/bookings/{bookingId}", 1L)
                 .header("X-Sharer-User-Id", 1L)
@@ -83,44 +92,61 @@ class BookingControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", is(bookingDto.getId()), Long.class));
 
-        Mockito.verify(bookingService, Mockito.times(1)).updateBookingStatus(1L, "true", 1L);
+        Mockito.verify(
+                bookingService,
+                Mockito.times(1))
+                .updateBookingStatus(1L, "true", 1L);
 
     }
 
     @Test
     void getBooking() throws Exception {
 
-        Mockito.when(bookingService.getBooking(Mockito.anyLong(), Mockito.anyLong())).thenReturn(bookingDto);
+        Mockito.when(
+                bookingService.getBooking(Mockito.anyLong(), Mockito.anyLong()))
+                .thenReturn(bookingDto);
 
         mvc.perform(get("/bookings/{bookingId}", 1L)
                 .header("X-Sharer-User-Id", 1L))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", is(bookingDto.getId()), Long.class));
 
-        Mockito.verify(bookingService, Mockito.times(1)).getBooking(1L, 1L);
+        Mockito.verify(
+                bookingService,
+                Mockito.times(1))
+                .getBooking(1L, 1L);
     }
 
     @Test
     void getAllByBooker() throws Exception {
 
-        Mockito.when(bookingService.getAllByBooker(Mockito.anyString(), Mockito.anyLong(), Mockito.anyInt(), Mockito.anyInt())).thenReturn(List.of(bookingDto));
+        Mockito.when(
+                bookingService.getAllByBooker(Mockito.anyString(), Mockito.anyLong(), Mockito.anyInt(), Mockito.anyInt()))
+                .thenReturn(List.of(bookingDto));
 
         mvc.perform(get("/bookings")
                 .header("X-Sharer-User-Id", 1L)
-                        .param("state", "ALL")
-                        .param("from", String.valueOf(1))
-                        .param("size", String.valueOf(1)))
+                .param("state", "ALL")
+                .param("from", String.valueOf(1))
+                .param("size", String.valueOf(1)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(1)))
                 .andExpect(jsonPath("$[0].id", is(bookingDto.getId()), Long.class));
 
-        Mockito.verify(bookingService, Mockito.times(1)).getAllByBooker("ALL", 1L, 1, 1);
+        Mockito.verify(
+                bookingService,
+                Mockito.times(1))
+                .getAllByBooker("ALL", 1L, 1, 1);
     }
 
     @Test
     void getAllBookingsForAllItemsOfOwner() throws Exception {
 
-        Mockito.when(bookingService.getAllBookingsForAllItemsOfOwner(Mockito.anyString(), Mockito.anyLong(), Mockito.anyInt(), Mockito.anyInt())).thenReturn(List.of(bookingDto));
+        Mockito.when(
+                bookingService
+                        .getAllBookingsForAllItemsOfOwner(Mockito.anyString(), Mockito.anyLong(),
+                                Mockito.anyInt(), Mockito.anyInt()))
+                        .thenReturn(List.of(bookingDto));
 
         mvc.perform(get("/bookings/owner")
                 .header("X-Sharer-User-Id", 1L)
@@ -131,6 +157,9 @@ class BookingControllerTest {
                 .andExpect(jsonPath("$", hasSize(1)))
                 .andExpect(jsonPath("$[0].id", is(bookingDto.getId()), Long.class));
 
-        Mockito.verify(bookingService, Mockito.times(1)).getAllBookingsForAllItemsOfOwner("ALL", 1L, 1, 1);
+        Mockito.verify(
+                bookingService,
+                Mockito.times(1))
+                .getAllBookingsForAllItemsOfOwner("ALL", 1L, 1, 1);
     }
 }
