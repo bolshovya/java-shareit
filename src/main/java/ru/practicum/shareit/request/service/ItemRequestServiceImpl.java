@@ -49,7 +49,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
         log.info("ItemRequestServiceImpl: получение списка всех запросов для пользователя с id: {}", userId);
         User userFromDb = userRepository.findById(userId)
                 .orElseThrow(UserNotFoundException::new);
-        return itemRequestRepository.findAllByRequestor(userFromDb, PageRequest.of(from/size, size, Sort.by("created").ascending()))
+        return itemRequestRepository.findAllByRequestor(userFromDb, PageRequest.of(from / size, size, Sort.by("created").ascending()))
                 .stream()
                 .map(ItemRequestMapper::getItemRequestDto)
                 .map(this::addItem)
@@ -71,7 +71,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
         log.info("ItemRequestServiceImpl: получение списка всех запросов для пользователя с id: {}", userId);
         User userFromDb = userRepository.findById(userId)
                 .orElseThrow(UserNotFoundException::new);
-        return itemRequestRepository.findAllByRequestorNot(userFromDb, PageRequest.of(from/size, size, Sort.by("created").ascending()))
+        return itemRequestRepository.findAllByRequestorNot(userFromDb, PageRequest.of(from / size, size, Sort.by("created").ascending()))
                 .stream()
                 .map(ItemRequestMapper::getItemRequestDto)
                 .map(this::addItem)

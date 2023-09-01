@@ -2,10 +2,7 @@ package ru.practicum.shareit.booking.service;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import ru.practicum.shareit.booking.Booking;
 import ru.practicum.shareit.booking.BookingStatus;
 import ru.practicum.shareit.booking.dto.BookingDto;
@@ -13,17 +10,15 @@ import ru.practicum.shareit.booking.dto.BookingMapper;
 import ru.practicum.shareit.booking.dto.BookingRequestDto;
 import ru.practicum.shareit.booking.storage.BookingRepository;
 import ru.practicum.shareit.item.Item;
-import ru.practicum.shareit.item.dto.ItemMapper;
 import ru.practicum.shareit.item.storage.ItemRepository;
 import ru.practicum.shareit.user.User;
-import ru.practicum.shareit.user.dto.UserMapper;
 import ru.practicum.shareit.user.storage.UserRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class BookingServiceTest {
 
@@ -42,6 +37,8 @@ class BookingServiceTest {
     private LocalDateTime start;
     private LocalDateTime end;
 
+    private Booking booking;
+
     @BeforeEach
     void init() {
         bookingRepository = Mockito.mock(BookingRepository.class);
@@ -54,6 +51,14 @@ class BookingServiceTest {
         start = LocalDateTime.now();
         end = LocalDateTime.now().plusDays(1);
         bookingRequestDto = BookingRequestDto.builder().itemId(1L).start(start).end(end).build();
+        booking = Booking.builder()
+                .id(1L)
+                .start(start)
+                .end(end)
+                .booker(booker1)
+                .item(item1)
+                .status(BookingStatus.WAITING)
+                .build();
     }
 
 
@@ -100,35 +105,59 @@ class BookingServiceTest {
 
     @Test
     void getBooking() {
-        Booking booking = Booking.builder().id(1L).start(start).end(end).booker(booker1).item(item1).status(BookingStatus.WAITING).build();
-        Mockito.when(bookingRepository.findById(Mockito.anyLong())).thenReturn(Optional.of(booking));
+
+        Mockito.when(
+                bookingRepository
+                        .findById(Mockito.anyLong()))
+                        .thenReturn(Optional.of(booking));
 
         bookingService.getBooking(1L, 1L);
 
-        Mockito.verify(bookingRepository, Mockito.times(1)).findById(Mockito.anyLong());
+        Mockito.verify(
+                bookingRepository,
+                Mockito.times(1))
+                .findById(Mockito.anyLong());
     }
 
     @Test
     void getAllByBooker() {
-        Booking booking = Booking.builder().id(1L).start(start).end(end).booker(booker1).item(item1).status(BookingStatus.WAITING).build();
-        Mockito.when(userRepository.findById(Mockito.anyLong())).thenReturn(Optional.of(booker1));
 
-        Mockito.when(bookingRepository.findAllByBookerOrderByStartDesc(Mockito.any(), Mockito.any())).thenReturn(List.of(booking));
+        Mockito.when(
+                userRepository
+                        .findById(Mockito.anyLong()))
+                        .thenReturn(Optional.of(booker1));
+
+        Mockito.when(
+                bookingRepository
+                        .findAllByBookerOrderByStartDesc(Mockito.any(), Mockito.any()))
+                .thenReturn(List.of(booking));
 
         bookingService.getAllByBooker( "ALL", 1L, 1, 1);
 
-        Mockito.verify(bookingRepository, Mockito.times(1)).findAllByBookerOrderByStartDesc(Mockito.any(), Mockito.any());
+        Mockito.verify(
+                bookingRepository,
+                Mockito.times(1))
+                .findAllByBookerOrderByStartDesc(Mockito.any(), Mockito.any());
     }
 
     @Test
     void getAllBookingsForAllItemsOfOwner() {
-        Booking booking = Booking.builder().id(1L).start(start).end(end).booker(booker1).item(item1).status(BookingStatus.WAITING).build();
-        Mockito.when(userRepository.findById(Mockito.anyLong())).thenReturn(Optional.of(booker1));
 
-        Mockito.when(bookingRepository.findAllByItemOwnerOrderByStartDesc(Mockito.any(), Mockito.any())).thenReturn(List.of(booking));
+        Mockito.when(
+                userRepository
+                        .findById(Mockito.anyLong()))
+                        .thenReturn(Optional.of(booker1));
+
+        Mockito.when(
+                bookingRepository
+                        .findAllByItemOwnerOrderByStartDesc(Mockito.any(), Mockito.any()))
+                        .thenReturn(List.of(booking));
 
         bookingService.getAllBookingsForAllItemsOfOwner( "ALL", 1L, 1, 1);
 
-        Mockito.verify(bookingRepository, Mockito.times(1)).findAllByItemOwnerOrderByStartDesc(Mockito.any(), Mockito.any());
+        Mockito.verify(
+                bookingRepository,
+                Mockito.times(1))
+                .findAllByItemOwnerOrderByStartDesc(Mockito.any(), Mockito.any());
     }
 }

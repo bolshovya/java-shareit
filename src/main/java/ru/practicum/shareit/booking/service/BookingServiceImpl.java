@@ -111,7 +111,7 @@ public class BookingServiceImpl implements BookingService {
         log.info("BookingServiceImpl: запрос всех бронирований({}) пользователя с id: {}", state, userId);
         User booker = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
         LocalDateTime time = LocalDateTime.now();
-        Pageable pageable = PageRequest.of(from/size, size);
+        Pageable pageable = PageRequest.of(from / size, size);
         switch (state) {
             case "ALL":
                 return bookingRepository.findAllByBookerOrderByStartDesc(booker, pageable)
@@ -145,7 +145,7 @@ public class BookingServiceImpl implements BookingService {
         log.info("BookingServiceImpl: запрос всех бронирований({}) вещей владельца с id: {}", state, userId);
         User owner = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
         LocalDateTime time = LocalDateTime.now();
-        Pageable pageable = PageRequest.of(from/size, size);
+        Pageable pageable = PageRequest.of(from / size, size);
         switch (state) {
             case "ALL":
                 return bookingRepository.findAllByItemOwnerOrderByStartDesc(owner, pageable)
