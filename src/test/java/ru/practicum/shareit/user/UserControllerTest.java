@@ -66,8 +66,6 @@ class UserControllerTest {
         userService.findById(1L);
 
         mvc.perform(get("/users/{id}", 1L))
-                .andExpect(status().isOk())
-                //.andExpect(jsonPath("$", hasSize(1)))
                 .andExpect(jsonPath("$.id", is(expectedUserDto.getId()), Long.class))
                 .andExpect(jsonPath("$.name", is(expectedUserDto.getName())))
                 .andExpect(jsonPath("$.email", is(expectedUserDto.getEmail())));
