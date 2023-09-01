@@ -32,6 +32,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     private final UserRepository userRepository;
     private final ItemRepository itemRepository;
 
+
     @Override
     public ItemRequestDto create(ItemRequestDto itemRequestDto, Long userId) {
         log.info("ItemRequestServiceImpl: сохранение запроса: {}, для пользователя с id: {}", itemRequestDto, userId);
