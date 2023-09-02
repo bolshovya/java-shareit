@@ -49,12 +49,18 @@ public class ItemDtoJsonTest {
 
         JsonContent<ItemDto> result = json.write(itemDto);
 
-        assertThat(result).extractingJsonPathNumberValue("$.id").isEqualTo(1);
-        assertThat(result).extractingJsonPathStringValue("$.name").isEqualTo(itemDto.getName());
-        assertThat(result).extractingJsonPathStringValue("$.description").isEqualTo(itemDto.getDescription());
-        assertThat(result).extractingJsonPathNumberValue("$.ownerId").isEqualTo(1);
-        assertThat(result).extractingJsonPathBooleanValue("$.available").isEqualTo(itemDto.getAvailable());
-        assertThat(result).extractingJsonPathNumberValue("$.requestId").isEqualTo(1);
+        assertThat(result).extractingJsonPathNumberValue("$.id")
+                .isEqualTo(1);
+        assertThat(result).extractingJsonPathStringValue("$.name")
+                .isEqualTo(itemDto.getName());
+        assertThat(result).extractingJsonPathStringValue("$.description")
+                .isEqualTo(itemDto.getDescription());
+        assertThat(result).extractingJsonPathNumberValue("$.ownerId")
+                .isEqualTo(1);
+        assertThat(result).extractingJsonPathBooleanValue("$.available")
+                .isEqualTo(itemDto.getAvailable());
+        assertThat(result).extractingJsonPathNumberValue("$.requestId")
+                .isEqualTo(1);
         assertThat(result).extractingJsonPathNumberValue("$.lastBooking.id")
                 .isEqualTo(1);
         assertThat(result).extractingJsonPathNumberValue("$.lastBooking.bookerId")
