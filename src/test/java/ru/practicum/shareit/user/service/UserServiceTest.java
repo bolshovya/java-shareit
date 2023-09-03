@@ -103,7 +103,7 @@ class UserServiceTest {
     }
 
     @Test
-    void update() {
+    void updateEmail() {
         Mockito.when(
                 userRepository
                         .save(Mockito.any(User.class)))
@@ -126,6 +126,33 @@ class UserServiceTest {
         Mockito.verify(
                 userRepository,
                 Mockito.times(1))
+                .findById(Mockito.anyLong());
+    }
+
+    @Test
+    void updateName() {
+        Mockito.when(
+                        userRepository
+                                .save(Mockito.any(User.class)))
+                .thenReturn(userRequest);
+
+        Mockito.when(
+                        userRepository
+                                .findById(Mockito.anyLong()))
+                .thenReturn(Optional.of(userRequest));
+
+        UserDto userDtoUpdate = UserDto.builder().id(1L).name("UserUpdate").build();
+
+        assertEquals(userService.update(userDtoUpdate), UserMapper.getUserDto(userRequest));
+
+        Mockito.verify(
+                        userRepository,
+                        Mockito.times(1))
+                .save(Mockito.any(User.class));
+
+        Mockito.verify(
+                        userRepository,
+                        Mockito.times(1))
                 .findById(Mockito.anyLong());
     }
 
