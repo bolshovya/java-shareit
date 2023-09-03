@@ -9,6 +9,7 @@ import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingMapper;
 import ru.practicum.shareit.booking.dto.BookingRequestDto;
 import ru.practicum.shareit.booking.storage.BookingRepository;
+import ru.practicum.shareit.exception.*;
 import ru.practicum.shareit.item.Item;
 import ru.practicum.shareit.item.storage.ItemRepository;
 import ru.practicum.shareit.user.User;
@@ -19,6 +20,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class BookingServiceTest {
 
@@ -85,8 +87,39 @@ class BookingServiceTest {
     }
 
     @Test
-    void updateBookingStatus() {
-        Mockito.when(userRepository.findById(Mockito.anyLong())).thenReturn(Optional.of(owner));
+    void createShouldReturnItemValidationException() {
+
+        item1 = Item.builder().id(1L).name("Дрель").description("Простая дрель").available(false).owner(owner).build();
+        Mockito.when(userRepository.findById(Mockito.anyLong())).thenReturn(Optional.of(booker1));
+
+        Mockito.when(itemRepository.findById(Mockito.anyLong())).thenReturn(Optional.of(item1));
+
+        assertThrows(ItemValidationException.class, () -> bookingService.create(bookingRequestDto, booking.getId()));
+    }
+
+    @Test
+    void createShouldReturnItemNotFoundException() {
+
+        item1 = Item.builder().id(1L).name("Дрель").description("Простая дрель").available(true).owner(booker1).build();
+        Mockito.when(userRepository.findById(Mockito.anyLong())).thenReturn(Optional.of(booker1));
+
+        Mockito.when(itemRepository.findById(Mockito.anyLong())).thenReturn(Optional.of(item1));
+
+        assertThrows(ItemNotFoundException.class, () -> bookingService.create(bookingRequestDto, booking.getId()));
+    }
+
+    @Test
+    void createNotValid() {
+        bookingRequestDto = BookingRequestDto.builder().itemId(1L).start(end).end(start).build();
+
+        assertThrows(BookingValidationException.class, () -> bookingService.create(bookingRequestDto, booking.getId()));
+    }
+
+    @Test
+    void updateBookingStatusTrue() {
+        Mockito.when(
+                userRepository.findById(Mockito.anyLong()))
+                .thenReturn(Optional.of(owner));
 
         Booking bookingFromDb = BookingMapper.getBooking(bookingRequestDto);
 
@@ -100,7 +133,84 @@ class BookingServiceTest {
 
         bookingService.updateBookingStatus(1L, "true", owner.getId());
         Mockito.verify(bookingRepository, Mockito.times(1)).save(Mockito.any());
+    }
 
+    @Test
+    void updateBookingStatusFalse() {
+        Mockito.when(
+                        userRepository.findById(Mockito.anyLong()))
+                .thenReturn(Optional.of(owner));
+
+        Booking bookingFromDb = BookingMapper.getBooking(bookingRequestDto);
+
+        bookingFromDb.setId(1L);
+        bookingFromDb.setStatus(BookingStatus.WAITING);
+        bookingFromDb.setBooker(booker1);
+        bookingFromDb.setItem(item1);
+
+        Mockito.when(bookingRepository.findById(Mockito.anyLong())).thenReturn(Optional.of(bookingFromDb));
+        Mockito.when(bookingRepository.save(Mockito.any())).thenReturn(bookingFromDb);
+
+        bookingService.updateBookingStatus(1L, "false", owner.getId());
+        Mockito.verify(bookingRepository, Mockito.times(1)).save(Mockito.any());
+    }
+
+    @Test
+    void updateBookingStatusDefault() {
+        Mockito.when(
+                        userRepository.findById(Mockito.anyLong()))
+                .thenReturn(Optional.of(owner));
+
+        Booking bookingFromDb = BookingMapper.getBooking(bookingRequestDto);
+
+        bookingFromDb.setId(1L);
+        bookingFromDb.setStatus(BookingStatus.WAITING);
+        bookingFromDb.setBooker(booker1);
+        bookingFromDb.setItem(item1);
+
+        Mockito.when(bookingRepository.findById(Mockito.anyLong())).thenReturn(Optional.of(bookingFromDb));
+        Mockito.when(bookingRepository.save(Mockito.any())).thenReturn(bookingFromDb);
+
+        assertThrows(IllegalStateException.class,
+                () -> bookingService.updateBookingStatus(1L, "privet", owner.getId()));
+    }
+
+    @Test
+    void updateBookingStatusShouldReturnBookingNotFoundException() {
+        Mockito.when(
+                        userRepository.findById(Mockito.anyLong()))
+                .thenReturn(Optional.of(owner));
+
+        Booking bookingFromDb = BookingMapper.getBooking(bookingRequestDto);
+
+        bookingFromDb.setId(1L);
+        bookingFromDb.setStatus(BookingStatus.WAITING);
+        bookingFromDb.setBooker(booker1);
+        bookingFromDb.setItem(item1);
+
+        Mockito.when(bookingRepository.findById(Mockito.anyLong())).thenReturn(Optional.of(bookingFromDb));
+
+        assertThrows(BookingNotFoundException.class,
+                () -> bookingService.updateBookingStatus(1L, "true", booker1.getId()));
+    }
+
+    @Test
+    void updateBookingStatusShouldReturnBookingValidationException() {
+        Mockito.when(
+                        userRepository.findById(Mockito.anyLong()))
+                .thenReturn(Optional.of(owner));
+
+        Booking bookingFromDb = BookingMapper.getBooking(bookingRequestDto);
+
+        bookingFromDb.setId(1L);
+        bookingFromDb.setStatus(BookingStatus.APPROVED);
+        bookingFromDb.setBooker(booker1);
+        bookingFromDb.setItem(item1);
+
+        Mockito.when(bookingRepository.findById(Mockito.anyLong())).thenReturn(Optional.of(bookingFromDb));
+
+        assertThrows(BookingValidationException.class,
+                () -> bookingService.updateBookingStatus(1L, "true", owner.getId()));
     }
 
     @Test
@@ -120,6 +230,18 @@ class BookingServiceTest {
     }
 
     @Test
+    void getBookingShouldReturnException() {
+
+        Mockito.when(
+                        bookingRepository
+                                .findById(Mockito.anyLong()))
+                .thenReturn(Optional.of(booking));
+
+        assertThrows(BookingNotFoundException.class,
+                () -> bookingService.getBooking(1L, 3L));
+    }
+
+    @Test
     void getAllByBooker() {
 
         Mockito.when(
@@ -134,10 +256,23 @@ class BookingServiceTest {
 
         bookingService.getAllByBooker("ALL", 1L, 1, 1);
 
+        bookingService.getAllByBooker("PAST", 1L, 1, 1);
+
+        bookingService.getAllByBooker("CURRENT", 1L, 1, 1);
+
+        bookingService.getAllByBooker("FUTURE", 1L, 1, 1);
+
+        bookingService.getAllByBooker("WAITING", 1L, 1, 1);
+
+        assertThrows(UnknownStateException.class,
+                () -> bookingService.getAllByBooker("privet", 1L, 1, 1));
+
         Mockito.verify(
                 bookingRepository,
                 Mockito.times(1))
                 .findAllByBookerOrderByStartDesc(Mockito.any(), Mockito.any());
+
+
     }
 
     @Test
@@ -154,6 +289,17 @@ class BookingServiceTest {
                         .thenReturn(List.of(booking));
 
         bookingService.getAllBookingsForAllItemsOfOwner("ALL", 1L, 1, 1);
+
+        bookingService.getAllBookingsForAllItemsOfOwner("PAST", 1L, 1, 1);
+
+        bookingService.getAllBookingsForAllItemsOfOwner("CURRENT", 1L, 1, 1);
+
+        bookingService.getAllBookingsForAllItemsOfOwner("FUTURE", 1L, 1, 1);
+
+        bookingService.getAllBookingsForAllItemsOfOwner("WAITING", 1L, 1, 1);
+
+        assertThrows(UnknownStateException.class,
+                () -> bookingService.getAllBookingsForAllItemsOfOwner("privet", 1L, 1, 1));
 
         Mockito.verify(
                 bookingRepository,
