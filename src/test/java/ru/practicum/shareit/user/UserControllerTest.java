@@ -7,6 +7,7 @@ import org.mockito.Mockito;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import ru.practicum.shareit.exception.UserValidationException;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.service.UserService;
 
@@ -15,6 +16,7 @@ import java.util.List;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -34,6 +36,8 @@ class UserControllerTest {
     private UserDto userDto;
     private UserDto expectedUserDto;
 
+    private UserDto userWithoutEmail;
+
     @BeforeEach
     void init() {
         userService = Mockito.mock(UserService.class);
@@ -42,7 +46,9 @@ class UserControllerTest {
         mvc = MockMvcBuilders.standaloneSetup(userController).build();
         userDto = UserDto.builder().name("User1").email("user1@user.com").build();
         expectedUserDto = UserDto.builder().id(1L).name("User1").email("user1@user.com").build();
+        userWithoutEmail = UserDto.builder().name("User1").build();
     }
+
 
     @Test
     void create() throws Exception {
@@ -58,6 +64,19 @@ class UserControllerTest {
                 .andExpect(jsonPath("$.name", is(expectedUserDto.getName())))
                 .andExpect(jsonPath("$.email", is(expectedUserDto.getEmail())));
     }
+
+    @Test
+    void createReturnUserValidateException() throws Exception {
+        Mockito.when(userService.create(Mockito.any(UserDto.class))).thenThrow(UserValidationException.class);
+
+        mvc.perform(post("/users")
+                        .content(mapper.writeValueAsString(userWithoutEmail))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+                //.andExpect(result -> assertTrue(result.getResolvedException() instanceof UserValidationException));
+                //.andExpect(result -> assertEquals("bad arguments", result.getResolvedException().getMessage()));
+    }
+
 
     @Test
     void findById() throws Exception {
