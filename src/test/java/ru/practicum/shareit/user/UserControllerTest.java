@@ -16,12 +16,10 @@ import java.util.List;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class UserControllerTest {
 
@@ -73,8 +71,6 @@ class UserControllerTest {
                         .content(mapper.writeValueAsString(userWithoutEmail))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
-                //.andExpect(result -> assertTrue(result.getResolvedException() instanceof UserValidationException));
-                //.andExpect(result -> assertEquals("bad arguments", result.getResolvedException().getMessage()));
     }
 
 
