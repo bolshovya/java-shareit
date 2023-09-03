@@ -1,5 +1,6 @@
 package ru.practicum.shareit.user.service;
 
+import org.hibernate.exception.ConstraintViolationException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -42,7 +43,9 @@ class UserServiceTest {
                         .save(Mockito.any(User.class)))
                         .thenReturn(userRequest);
 
-        assertEquals(userService.create(userDtoRequest), expectedUserDto);
+        UserDto userDtoFromDb = userService.create(userDtoRequest);
+
+        assertEquals(userDtoFromDb, expectedUserDto);
 
         Mockito.verify(
                 userRepository,
@@ -55,7 +58,7 @@ class UserServiceTest {
         Mockito.when(
                 userRepository
                         .save(Mockito.any(User.class)))
-                .thenThrow(UserValidationException.class);
+                .thenThrow(ConstraintViolationException.class);
 
         UserDto userWithOutEmail = UserDto.builder().name("User123").build();
 
