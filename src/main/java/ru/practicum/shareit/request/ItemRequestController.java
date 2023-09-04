@@ -12,6 +12,8 @@ import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import java.util.List;
 
+import static ru.practicum.shareit.utils.Constant.USER_ID;
+
 @Validated
 @RestController
 @RequestMapping(path = "/requests")
@@ -28,7 +30,7 @@ public class ItemRequestController {
     @PostMapping
     public ItemRequestDto create(
             @Valid @RequestBody ItemRequestDto itemRequestDto,
-            @RequestHeader("X-Sharer-User-Id") Long userId
+            @RequestHeader(USER_ID) Long userId
     ) {
         log.info("ItemRequestController POST: сохранение запроса: {}, для пользователя с id: {}", itemRequestDto, userId);
         return itemRequestService.create(itemRequestDto, userId);
@@ -43,9 +45,9 @@ public class ItemRequestController {
      */
     @GetMapping
     public List<ItemRequestDto> findAllOfYour(
-            @RequestHeader("X-Sharer-User-Id") Long userId,
-            @RequestParam(value = "from", defaultValue = "0", required = false) @Min(0) Integer from,
-            @RequestParam(value = "size", defaultValue = "10", required = false) @Min(1) Integer size
+            @RequestHeader(USER_ID) Long userId,
+            @RequestParam(value = "from", defaultValue = "0") @Min(0) Integer from,
+            @RequestParam(value = "size", defaultValue = "10") @Min(1) Integer size
     ) {
         log.info("ItemRequestController GET: получение списка всех запросов для пользователя с id: {}", userId);
         return itemRequestService.findAllOfYour(userId, from, size);
@@ -60,9 +62,9 @@ public class ItemRequestController {
      */
     @GetMapping("/all")
     public List<ItemRequestDto> findAllOfOther(
-            @RequestHeader("X-Sharer-User-Id") Long userId,
-            @RequestParam(value = "from", defaultValue = "0", required = false) @Min(0) Integer from,
-            @RequestParam(value = "size", defaultValue = "10", required = false) @Min(1) Integer size
+            @RequestHeader(USER_ID) Long userId,
+            @RequestParam(value = "from", defaultValue = "0") @Min(0) Integer from,
+            @RequestParam(value = "size", defaultValue = "10") @Min(1) Integer size
     ) {
         log.info("ItemRequestController GET: получение списка всех запросов для пользователя с id: {}", userId);
         return itemRequestService.findAllOfOther(userId, from, size);
@@ -76,7 +78,7 @@ public class ItemRequestController {
     @GetMapping("/{requestId}")
     public ItemRequestDto findById(
             @PathVariable Long requestId,
-            @RequestHeader("X-Sharer-User-Id") Long userId
+            @RequestHeader(USER_ID) Long userId
     ) {
         log.info("ItemRequestController GET: получение запроса с id: {}, для пользователя с id:", requestId, userId);
         return itemRequestService.findById(requestId, userId);

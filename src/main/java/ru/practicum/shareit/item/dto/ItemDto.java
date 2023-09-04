@@ -28,11 +28,11 @@ public class ItemDto {
     @NotNull
     private Boolean available;
 
-    ItemBookingDto lastBooking;
+    private ItemBookingDto lastBooking;
 
-    ItemBookingDto nextBooking;
+    private ItemBookingDto nextBooking;
 
-    List<CommentDto> comments;
+    private List<CommentDto> comments;
 
     private Long requestId;
 }

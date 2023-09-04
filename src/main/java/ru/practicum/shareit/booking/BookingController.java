@@ -13,6 +13,8 @@ import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import java.util.List;
 
+import static ru.practicum.shareit.utils.Constant.USER_ID;
+
 @Validated
 @RestController
 @RequestMapping(path = "/bookings")
@@ -31,7 +33,7 @@ public class BookingController {
     @PostMapping
     public BookingDto create(
             @Valid @RequestBody BookingRequestDto bookingRequestDto,
-            @RequestHeader("X-Sharer-User-Id") Long userId
+            @RequestHeader(USER_ID) Long userId
     ) {
         log.info("BookingController POST: сохранение бронирования: {}, для пользователя в с id: {}", bookingRequestDto, userId);
         return bookingService.create(bookingRequestDto, userId);
@@ -46,7 +48,7 @@ public class BookingController {
     public BookingDto updateBookingStatus(
             @PathVariable Long bookingId,
             @RequestParam String approved,
-            @RequestHeader("X-Sharer-User-Id") Long userId
+            @RequestHeader(USER_ID) Long userId
     ) {
         return bookingService.updateBookingStatus(bookingId, approved, userId);
     }
@@ -59,7 +61,7 @@ public class BookingController {
     @GetMapping("/{bookingId}")
     public BookingDto getBooking(
             @PathVariable Long bookingId,
-            @RequestHeader("X-Sharer-User-Id") Long userId
+            @RequestHeader(USER_ID) Long userId
     ) {
         return bookingService.getBooking(bookingId, userId);
     }
@@ -78,9 +80,9 @@ public class BookingController {
     @GetMapping
     public List<BookingDto> getAllByBooker(
             @RequestParam(value = "state", defaultValue = "ALL") String state,
-            @RequestHeader("X-Sharer-User-Id") Long userId,
-            @RequestParam(value = "from", defaultValue = "0", required = false) @Min(0) Integer from,
-            @RequestParam(value = "size", defaultValue = "10", required = false) @Min(1) Integer size
+            @RequestHeader(USER_ID) Long userId,
+            @RequestParam(value = "from", defaultValue = "0") @Min(0) Integer from,
+            @RequestParam(value = "size", defaultValue = "10") @Min(1) Integer size
     ) {
         log.info("BookingController: запрос всех бронирований({}) пользователя с id: {}", state, userId);
         return bookingService.getAllByBooker(state, userId, from, size);
@@ -95,9 +97,9 @@ public class BookingController {
     @GetMapping("/owner")
     public List<BookingDto> getAllBookingsForAllItemsOfOwner(
             @RequestParam(value = "state", defaultValue = "ALL") String state,
-            @RequestHeader("X-Sharer-User-Id") Long userId,
-            @RequestParam(value = "from", defaultValue = "0", required = false) @Min(0) Integer from,
-            @RequestParam(value = "size", defaultValue = "10", required = false) @Min(1) Integer size
+            @RequestHeader(USER_ID) Long userId,
+            @RequestParam(value = "from", defaultValue = "0") @Min(0) Integer from,
+            @RequestParam(value = "size", defaultValue = "10") @Min(1) Integer size
     ) {
         log.info("BookingController: запрос всех бронирований({}) пользователя с id: {}", state, userId);
         return bookingService.getAllBookingsForAllItemsOfOwner(state, userId, from, size);
