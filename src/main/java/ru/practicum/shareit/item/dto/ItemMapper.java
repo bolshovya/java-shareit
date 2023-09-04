@@ -22,6 +22,7 @@ public class ItemMapper {
                 .description(item.getDescription())
                 .ownerId(item.getOwner().getId())
                 .available(item.getAvailable())
+                .requestId(item.getRequest() != null ? item.getRequest().getId() : null)
                 .build();
     }
 
@@ -29,6 +30,16 @@ public class ItemMapper {
         return ItemBookingDto.builder()
                 .id(booking.getId())
                 .bookerId(booking.getBooker().getId())
+                .build();
+    }
+
+    public static ItemRequestResponseDto getItemRequestResponseDto(Item item) {
+        return ItemRequestResponseDto.builder()
+                .id(item.getId())
+                .name(item.getName())
+                .description(item.getDescription())
+                .requestId(item.getRequest().getId())
+                .available(item.getAvailable())
                 .build();
     }
 }

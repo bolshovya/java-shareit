@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.exception.UserNotFoundException;
 import ru.practicum.shareit.exception.UserValidationException;
-import ru.practicum.shareit.item.storage.ItemRepository;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.dto.UserMapper;
@@ -22,8 +21,6 @@ import java.util.stream.Collectors;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
-
-    private final ItemRepository itemRepository;
 
     @Transactional
     @Override
@@ -73,6 +70,5 @@ public class UserServiceImpl implements UserService {
         findById(id);
         log.info("UserServiceImpl: удаление пользователя с id: {}", id);
         userRepository.deleteById(id);
-        // itemRepository.deleteByOwner(id);
     }
 }

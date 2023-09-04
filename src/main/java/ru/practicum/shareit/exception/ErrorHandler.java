@@ -33,6 +33,13 @@ public class ErrorHandler {
     }
 
     @ExceptionHandler
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse handleItemRequestNotFoundException(final ItemRequestNotFoundException e) {
+        log.debug("Запрос не найден. Получен статус 404 {}", e.getMessage());
+        return new ErrorResponse("ItemRequestNotFoundException", e.getMessage());
+    }
+
+    @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleUserValidationException(final UserValidationException e) {
         log.debug("UserValidationException. Получен статус 400 {}", e.getMessage());
