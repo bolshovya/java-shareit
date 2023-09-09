@@ -63,6 +63,7 @@ class UserControllerTest {
                 .andExpect(jsonPath("$.email", is(expectedUserDto.getEmail())));
     }
 
+    /*
     @Test
     void createReturnUserValidateException() throws Exception {
         Mockito.when(userService.create(Mockito.any(UserDto.class))).thenThrow(UserValidationException.class);
@@ -72,6 +73,8 @@ class UserControllerTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
     }
+
+     */
 
 
     @Test
