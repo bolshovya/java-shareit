@@ -83,7 +83,7 @@ class BookingControllerTest {
 
         Mockito.when(
                 bookingService
-                        .updateBookingStatus(Mockito.anyLong(), Mockito.anyString(), Mockito.anyLong()))
+                        .updateBookingState(Mockito.anyLong(), Mockito.anyString(), Mockito.anyLong()))
                         .thenReturn(bookingDto);
 
         mvc.perform(patch("/bookings/{bookingId}", 1L)
@@ -95,7 +95,7 @@ class BookingControllerTest {
         Mockito.verify(
                 bookingService,
                 Mockito.times(1))
-                .updateBookingStatus(1L, "true", 1L);
+                .updateBookingState(1L, "true", 1L);
 
     }
 

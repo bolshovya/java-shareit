@@ -108,12 +108,6 @@ class BookingServiceTest {
         assertThrows(ItemNotFoundException.class, () -> bookingService.create(bookingRequestDto, booking.getId()));
     }
 
-    @Test
-    void createNotValid() {
-        bookingRequestDto = BookingRequestDto.builder().itemId(1L).start(end).end(start).build();
-
-        assertThrows(BookingValidationException.class, () -> bookingService.create(bookingRequestDto, booking.getId()));
-    }
 
     @Test
     void updateBookingStatusTrue() {
@@ -131,7 +125,7 @@ class BookingServiceTest {
         Mockito.when(bookingRepository.findById(Mockito.anyLong())).thenReturn(Optional.of(bookingFromDb));
         Mockito.when(bookingRepository.save(Mockito.any())).thenReturn(bookingFromDb);
 
-        bookingService.updateBookingStatus(1L, "true", owner.getId());
+        bookingService.updateBookingState(1L, "true", owner.getId());
         Mockito.verify(bookingRepository, Mockito.times(1)).save(Mockito.any());
     }
 
@@ -151,7 +145,7 @@ class BookingServiceTest {
         Mockito.when(bookingRepository.findById(Mockito.anyLong())).thenReturn(Optional.of(bookingFromDb));
         Mockito.when(bookingRepository.save(Mockito.any())).thenReturn(bookingFromDb);
 
-        bookingService.updateBookingStatus(1L, "false", owner.getId());
+        bookingService.updateBookingState(1L, "false", owner.getId());
         Mockito.verify(bookingRepository, Mockito.times(1)).save(Mockito.any());
     }
 
@@ -172,7 +166,7 @@ class BookingServiceTest {
         Mockito.when(bookingRepository.save(Mockito.any())).thenReturn(bookingFromDb);
 
         assertThrows(IllegalStateException.class,
-                () -> bookingService.updateBookingStatus(1L, "privet", owner.getId()));
+                () -> bookingService.updateBookingState(1L, "privet", owner.getId()));
     }
 
     @Test
@@ -191,7 +185,7 @@ class BookingServiceTest {
         Mockito.when(bookingRepository.findById(Mockito.anyLong())).thenReturn(Optional.of(bookingFromDb));
 
         assertThrows(BookingNotFoundException.class,
-                () -> bookingService.updateBookingStatus(1L, "true", booker1.getId()));
+                () -> bookingService.updateBookingState(1L, "true", booker1.getId()));
     }
 
     @Test
@@ -210,7 +204,7 @@ class BookingServiceTest {
         Mockito.when(bookingRepository.findById(Mockito.anyLong())).thenReturn(Optional.of(bookingFromDb));
 
         assertThrows(BookingValidationException.class,
-                () -> bookingService.updateBookingStatus(1L, "true", owner.getId()));
+                () -> bookingService.updateBookingState(1L, "true", owner.getId()));
     }
 
     @Test

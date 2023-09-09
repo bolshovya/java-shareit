@@ -8,7 +8,6 @@ import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.service.ItemService;
 
-import javax.validation.Valid;
 import java.util.List;
 
 import static ru.practicum.shareit.utils.Constant.USER_ID;
@@ -23,7 +22,7 @@ public class ItemController {
 
     @PostMapping
     public ItemDto create(
-            @Valid @RequestBody ItemDto itemDto,
+            @RequestBody ItemDto itemDto,
             @RequestHeader(USER_ID) Long userId
     ) {
         log.info("ItemController POST: сохранение элемента: {}, для пользователя в с id: {}", itemDto, userId);
@@ -68,7 +67,7 @@ public class ItemController {
 
     @PostMapping("/{itemId}/comment")
     public CommentDto createComment(
-            @Valid @RequestBody CommentDto commentDto,
+            @RequestBody CommentDto commentDto,
             @PathVariable Long itemId,
             @RequestHeader(USER_ID) Long userId
     ) {

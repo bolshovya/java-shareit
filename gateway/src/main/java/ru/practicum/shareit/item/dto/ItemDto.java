@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Data
@@ -15,12 +17,15 @@ public class ItemDto {
 
     private Long id;
 
+    @NotBlank
     private String name;
 
+    @NotBlank
     private String description;
 
     private Long ownerId;
 
+    @NotNull
     private Boolean available;
 
     private ItemBookingDto lastBooking;
