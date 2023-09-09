@@ -13,7 +13,7 @@ import javax.validation.constraints.Min;
 
 import static ru.practicum.shareit.utils.Constant.USER_ID;
 
-@Controller
+@RestController
 @RequestMapping(path = "/requests")
 @RequiredArgsConstructor
 @Slf4j

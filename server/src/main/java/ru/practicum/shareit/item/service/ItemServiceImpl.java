@@ -128,13 +128,12 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    @Transactional(readOnly = true)
     public List<ItemDto> findAll(Long userId) {
         log.info("ItemServiceImpl: получение списка всех элементов для пользователя с id: {}", userId);
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("Пользователь с id: " + userId + " не найден"));
 
-        return itemRepository.findByOwner(user)
+        return itemRepository.findAllByOwner(user)
                 .stream()
                 .map(this::addBooking)
                 .map(this::addComment)

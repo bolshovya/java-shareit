@@ -3,17 +3,17 @@ package ru.practicum.shareit.item;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Min;
 
 import static ru.practicum.shareit.utils.Constant.USER_ID;
 
-@Controller
+@RestController
 @RequestMapping(path = "/items")
 @RequiredArgsConstructor
 @Slf4j
@@ -59,11 +59,13 @@ public class ItemController {
 
     @GetMapping("/search")
     public ResponseEntity<Object> search(
-            @RequestParam String text,
+            @RequestParam(name = "text") String text,
+            @RequestParam(required = false, defaultValue = "0") @Min(0) Integer from,
+            @RequestParam(required = false, defaultValue = "20") @Min(1) Integer size,
             @RequestHeader(USER_ID) Long userId
     ) {
         log.info("Search with text: {}", text);
-        return itemClient.search(text, userId);
+        return itemClient.search(text, from, size, userId);
     }
 
     @PostMapping("/{itemId}/comment")

@@ -25,9 +25,9 @@ public class BookingRequestDto {
     @Future
     private LocalDateTime end;
 
-    @AssertTrue
+    @AssertTrue(message = "")
     private boolean isEndAfterStart() {
-        return end.isAfter(start);
+        return start == null || end == null || end.isAfter(start);
     }
 
 }
