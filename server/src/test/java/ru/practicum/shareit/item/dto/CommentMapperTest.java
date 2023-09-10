@@ -6,8 +6,6 @@ import ru.practicum.shareit.user.User;
 
 import java.time.LocalDateTime;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 class CommentMapperTest {
 
     @Test

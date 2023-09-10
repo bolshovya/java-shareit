@@ -6,8 +6,6 @@ import ru.practicum.shareit.item.Item;
 import ru.practicum.shareit.request.ItemRequest;
 import ru.practicum.shareit.user.User;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 class ItemMapperTest {
 
     @Test

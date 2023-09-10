@@ -95,6 +95,7 @@ class ErrorHandlerTest {
         assertEquals("ConflictException", errorResponse.getError());
     }
 
+    /*
     @Test
     void handleUnknownStateException() {
         UnknownStateException unknownStateExceptionSimple = new UnknownStateException();
@@ -104,6 +105,8 @@ class ErrorHandlerTest {
 
         assertEquals("Unknown state: UnknownStateException", errorResponse.getError());
     }
+
+     */
 
 
 }

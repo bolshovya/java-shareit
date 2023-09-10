@@ -96,7 +96,7 @@ class ItemControllerTest {
     void findAll() throws Exception {
         Mockito.when(
                 itemService
-                        .findAll(Mockito.anyLong()))
+                        .findAll(Mockito.anyInt(), Mockito.anyInt(), Mockito.anyLong()))
                         .thenReturn(List.of(expectedItem));
 
         mvc.perform(get("/items")
@@ -110,7 +110,7 @@ class ItemControllerTest {
         Mockito.verify(
                 itemService,
                 Mockito.times(1))
-                .findAll(Mockito.anyLong());
+                .findAll(Mockito.anyInt(), Mockito.anyInt(), Mockito.anyLong());
     }
 
     @Test
