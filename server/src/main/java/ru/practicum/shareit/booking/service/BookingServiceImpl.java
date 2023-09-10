@@ -108,24 +108,25 @@ public class BookingServiceImpl implements BookingService {
         switch (state) {
             case "ALL":
                 return bookingRepository.findAllByBookerOrderByStartDesc(booker, pageable)
-                        .stream().map(BookingMapper::getBookingDto).collect(Collectors.toList());
-
-            case "PAST":
-                return bookingRepository.findAllByBookerAndEndBeforeOrderByStartDesc(booker, time, pageable)
                         .stream()
                         .map(BookingMapper::getBookingDto)
-                        .sorted(Comparator.comparing(BookingDto::getStart))
+                        .collect(Collectors.toList());
+
+            case "PAST":
+                return bookingRepository.findAllByBookerAndEndBeforeOrderByStartDesc(booker, LocalDateTime.now(), pageable)
+                        .stream()
+                        .map(BookingMapper::getBookingDto)
                         .collect(Collectors.toList());
 
             case "CURRENT":
-                return bookingRepository.findAllByBookerAndStartBeforeAndEndAfterOrderByStartDesc(booker, time, time, pageable)
+                return bookingRepository.findAllByBookerAndStartBeforeAndEndAfterOrderByStartDesc(booker, LocalDateTime.now(), LocalDateTime.now(), pageable)
                         .stream()
                         .map(BookingMapper::getBookingDto)
                         .sorted(Comparator.comparing(BookingDto::getStart))
                         .collect(Collectors.toList());
 
             case "FUTURE":
-                return bookingRepository.findAllByBookerAndEndAfterOrderByStartDesc(booker, time, pageable)
+                return bookingRepository.findAllByBookerAndEndAfterOrderByStartDesc(booker, LocalDateTime.now(), pageable)
                         .stream().map(BookingMapper::getBookingDto).collect(Collectors.toList());
 
             case "WAITING":
@@ -151,21 +152,20 @@ public class BookingServiceImpl implements BookingService {
                         .stream().map(BookingMapper::getBookingDto).collect(Collectors.toList());
 
             case "PAST":
-                return bookingRepository.findAllByItemOwnerAndEndBeforeOrderByStartDesc(owner, time, pageable)
+                return bookingRepository.findAllByItemOwnerAndEndBeforeOrderByStartDesc(owner, LocalDateTime.now(), pageable)
                         .stream()
                         .map(BookingMapper::getBookingDto)
-                        .sorted(Comparator.comparing(BookingDto::getStart))
                         .collect(Collectors.toList());
 
             case "CURRENT":
-                return bookingRepository.findAllByItemOwnerAndStartBeforeAndEndAfterOrderByStartDesc(owner, time, time, pageable)
+                return bookingRepository.findAllByItemOwnerAndStartBeforeAndEndAfterOrderByStartDesc(owner, LocalDateTime.now(), LocalDateTime.now(), pageable)
                         .stream()
                         .map(BookingMapper::getBookingDto)
                         .sorted(Comparator.comparing(BookingDto::getStart))
                         .collect(Collectors.toList());
 
             case "FUTURE":
-                return bookingRepository.findAllByItemOwnerAndEndAfterOrderByStartDesc(owner, time, pageable)
+                return bookingRepository.findAllByItemOwnerAndEndAfterOrderByStartDesc(owner, LocalDateTime.now(), pageable)
                         .stream().map(BookingMapper::getBookingDto).collect(Collectors.toList());
 
             case "WAITING":
