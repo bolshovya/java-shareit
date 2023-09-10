@@ -40,10 +40,12 @@ public class ItemController {
 
     @GetMapping
     public List<ItemDto> findAll(
+            @RequestParam(value = "from", defaultValue = "0") Integer from,
+            @RequestParam(value = "size", defaultValue = "10") Integer size,
             @RequestHeader(USER_ID) Long userId
     ) {
         log.info("ItemController GET: получение списка всех элементов для пользователя с id: {}", userId);
-        return itemService.findAll(userId);
+        return itemService.findAll(from, size, userId);
     }
 
     @PatchMapping("/{itemId}")

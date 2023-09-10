@@ -10,7 +10,7 @@ public interface ItemService {
 
     ItemDto findById(Long id, Long userId);
 
-    List<ItemDto> findAll(Long userId);
+    List<ItemDto> findAll(Integer from, Integer size, Long userId);
 
     ItemDto update(Long itemId, Long userId, ItemDto itemDtoUpdate);
 

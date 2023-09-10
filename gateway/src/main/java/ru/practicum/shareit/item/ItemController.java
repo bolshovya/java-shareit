@@ -41,10 +41,12 @@ public class ItemController {
 
     @GetMapping
     public ResponseEntity<Object> findAll(
+            @RequestParam(required = false, defaultValue = "0") @Min(0) Integer from,
+            @RequestParam(required = false, defaultValue = "20") @Min(1) Integer size,
             @RequestHeader(USER_ID) Long userId
     ) {
         log.info("Get items");
-        return itemClient.getItems(userId);
+        return itemClient.getItems(from, size, userId);
     }
 
     @PatchMapping("/{itemId}")

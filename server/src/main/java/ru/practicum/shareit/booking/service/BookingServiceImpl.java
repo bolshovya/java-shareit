@@ -19,6 +19,7 @@ import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.storage.UserRepository;
 
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -111,11 +112,17 @@ public class BookingServiceImpl implements BookingService {
 
             case "PAST":
                 return bookingRepository.findAllByBookerAndEndBeforeOrderByStartDesc(booker, time, pageable)
-                        .stream().map(BookingMapper::getBookingDto).collect(Collectors.toList());
+                        .stream()
+                        .map(BookingMapper::getBookingDto)
+                        .sorted(Comparator.comparing(BookingDto::getStart))
+                        .collect(Collectors.toList());
 
             case "CURRENT":
                 return bookingRepository.findAllByBookerAndStartBeforeAndEndAfterOrderByStartDesc(booker, time, time, pageable)
-                        .stream().map(BookingMapper::getBookingDto).collect(Collectors.toList());
+                        .stream()
+                        .map(BookingMapper::getBookingDto)
+                        .sorted(Comparator.comparing(BookingDto::getStart))
+                        .collect(Collectors.toList());
 
             case "FUTURE":
                 return bookingRepository.findAllByBookerAndEndAfterOrderByStartDesc(booker, time, pageable)
@@ -145,11 +152,17 @@ public class BookingServiceImpl implements BookingService {
 
             case "PAST":
                 return bookingRepository.findAllByItemOwnerAndEndBeforeOrderByStartDesc(owner, time, pageable)
-                        .stream().map(BookingMapper::getBookingDto).collect(Collectors.toList());
+                        .stream()
+                        .map(BookingMapper::getBookingDto)
+                        .sorted(Comparator.comparing(BookingDto::getStart))
+                        .collect(Collectors.toList());
 
             case "CURRENT":
                 return bookingRepository.findAllByItemOwnerAndStartBeforeAndEndAfterOrderByStartDesc(owner, time, time, pageable)
-                        .stream().map(BookingMapper::getBookingDto).collect(Collectors.toList());
+                        .stream()
+                        .map(BookingMapper::getBookingDto)
+                        .sorted(Comparator.comparing(BookingDto::getStart))
+                        .collect(Collectors.toList());
 
             case "FUTURE":
                 return bookingRepository.findAllByItemOwnerAndEndAfterOrderByStartDesc(owner, time, pageable)

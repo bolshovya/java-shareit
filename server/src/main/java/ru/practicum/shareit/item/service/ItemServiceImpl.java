@@ -2,6 +2,8 @@ package ru.practicum.shareit.item.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.Booking;
@@ -128,15 +130,18 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<ItemDto> findAll(Long userId) {
+    public List<ItemDto> findAll(Integer from, Integer size, Long userId) {
         log.info("ItemServiceImpl: получение списка всех элементов для пользователя с id: {}", userId);
+        LocalDateTime time = LocalDateTime.now();
+        Pageable pageable = PageRequest.of(from / size, size);
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("Пользователь с id: " + userId + " не найден"));
 
-        return itemRepository.findAllByOwner(user)
+        return itemRepository.findAllByOwner(user, pageable)
                 .stream()
                 .map(this::addBooking)
                 .map(this::addComment)
+                .sorted(Comparator.comparing(ItemDto::getId))
                 .collect(Collectors.toList());
     }
 
